@@ -1,0 +1,5 @@
+<Solution>
+  <Project Path="NguyenBinhAnMVC/NguyenBinhAnMVC.csproj" Id="681b928b-24b9-4a6e-88f1-0d20d8fc87cb" />
+  <Project Path="NguyenBinhAn_A01_Business/NguyenBinhAn_A01_Business.csproj" Id="44129b7d-fbdc-43b2-a2b6-840c9d4af708" />
+  <Project Path="NguyenBinhAn_A01_Data/NguyenBinhAn_A01_Data.csproj" Id="f8b5742e-d493-4a84-8e9d-6d72e80136b9" />
+</Solution>
