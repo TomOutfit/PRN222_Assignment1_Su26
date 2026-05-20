@@ -1,0 +1,108 @@
+@model IEnumerable<NguyenBinhAn_A01_Data.Models.NewsArticle>
+@{
+    ViewData["Title"] = "News Statistics Report";
+    var accountsDict = ViewBag.AccountsDict as Dictionary<short, string> ?? new Dictionary<short, string>();
+    var categoriesDict = ViewBag.CategoriesDict as Dictionary<short, string> ?? new Dictionary<short, string>();
+}
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h1>News Statistics Report</h1>
+            <a asp-action="Reports" class="btn btn-secondary">Back to Reports</a>
+        </div>
+
+        <div class="alert alert-info">
+            <strong>Report Period:</strong>
+            @ViewBag.StartDate.ToString("MMM dd, yyyy") to @ViewBag.EndDate.ToString("MMM dd, yyyy")
+        </div>
+
+        @if (TempData["SuccessMessage"] != null)
+        {
+            <div class="alert alert-success alert-dismissible fade show">
+                @TempData["SuccessMessage"]
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        }
+
+        <div class="card mb-3">
+            <div class="card-body">
+                <div class="row text-center">
+                    <div class="col-md-3">
+                        <h3 class="text-primary">@Model.Count()</h3>
+                        <p class="text-muted">Total Articles</p>
+                    </div>
+                    <div class="col-md-3">
+                        <h3 class="text-success">@Model.Count(n => n.NewsStatus == true)</h3>
+                        <p class="text-muted">Active</p>
+                    </div>
+                    <div class="col-md-3">
+                        <h3 class="text-warning">@Model.Count(n => n.NewsStatus != true)</h3>
+                        <p class="text-muted">Inactive</p>
+                    </div>
+                    <div class="col-md-3">
+                        <h3 class="text-info">@Model.Select(n => n.CategoryID).Distinct().Count()</h3>
+                        <p class="text-muted">Categories</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-striped table-hover">
+                        <thead class="table-dark">
+                            <tr>
+                                <th>Title</th>
+                                <th>Author</th>
+                                <th>Category</th>
+                                <th>Status</th>
+                                <th>Created Date</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var news in Model.OrderByDescending(n => n.CreatedDate))
+                            {
+                                <tr>
+                                    <td>@news.NewsTitle</td>
+                                    <td>
+                                        @if (news.CreatedByID.HasValue && accountsDict.ContainsKey(news.CreatedByID.Value))
+                                        {
+                                            @accountsDict[news.CreatedByID.Value]
+                                        }
+                                        else
+                                        {
+                                            <span class="text-muted">Unknown</span>
+                                        }
+                                    </td>
+                                    <td>
+                                        @if (news.CategoryID.HasValue && categoriesDict.ContainsKey(news.CategoryID.Value))
+                                        {
+                                            @categoriesDict[news.CategoryID.Value]
+                                        }
+                                        else
+                                        {
+                                            <span class="text-muted">N/A</span>
+                                        }
+                                    </td>
+                                    <td>
+                                        @if (news.NewsStatus == true)
+                                        {
+                                            <span class="badge bg-success">Active</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-secondary">Inactive</span>
+                                        }
+                                    </td>
+                                    <td>@(news.CreatedDate?.ToString("MMM dd, yyyy HH:mm") ?? "N/A")</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

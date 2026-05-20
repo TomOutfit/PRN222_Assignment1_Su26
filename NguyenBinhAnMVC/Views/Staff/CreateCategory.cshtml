@@ -1,0 +1,51 @@
+@model NguyenBinhAn_A01_Data.Models.Category
+@{
+    ViewData["Title"] = "Create Category";
+}
+
+<div class="row">
+    <div class="col-md-6">
+        <h1>Create Category</h1>
+        
+        <form asp-action="CreateCategory" method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            
+            <div class="form-group mb-3">
+                <label asp-for="CategoryName" class="form-label"></label>
+                <input asp-for="CategoryName" class="form-control" />
+                <span asp-validation-for="CategoryName" class="text-danger"></span>
+            </div>
+            
+            <div class="form-group mb-3">
+                <label asp-for="CategoryDescription" class="form-label"></label>
+                <textarea asp-for="CategoryDescription" class="form-control" rows="3"></textarea>
+                <span asp-validation-for="CategoryDescription" class="text-danger"></span>
+            </div>
+            
+            <div class="form-group mb-3">
+                <label asp-for="ParentCategoryID" class="form-label">Parent Category</label>
+                <select asp-for="ParentCategoryID" class="form-control" asp-items="@(new SelectList(ViewBag.ParentCategories, "CategoryID", "CategoryName"))">
+                    <option value="">None (Root Category)</option>
+                </select>
+                <span asp-validation-for="ParentCategoryID" class="text-danger"></span>
+            </div>
+            
+            <div class="form-group mb-3">
+                <div class="form-check">
+                    <input asp-for="IsActive" class="form-check-input" checked />
+                    <label asp-for="IsActive" class="form-check-label"></label>
+                </div>
+                <span asp-validation-for="IsActive" class="text-danger"></span>
+            </div>
+            
+            <div class="form-group">
+                <button type="submit" class="btn btn-primary">Create</button>
+                <a asp-action="Categories" class="btn btn-secondary">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

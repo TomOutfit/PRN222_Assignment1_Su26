@@ -1,0 +1,87 @@
+﻿@model IEnumerable<NguyenBinhAn_A01_Data.Models.NewsArticle>
+@{
+    ViewData["Title"] = "News Articles";
+}
+
+<div class="row">
+    <div class="col-md-9">
+        <h1>News Articles</h1>
+        
+        @if (!string.IsNullOrEmpty(ViewBag.SearchTerm))
+        {
+            <p class="text-muted">Search results for: "@ViewBag.SearchTerm"</p>
+        }
+        
+        @if (ViewBag.Category != null)
+        {
+            <p class="text-muted">Category: @ViewBag.Category.CategoryName</p>
+        }
+
+        @if (!Model.Any())
+        {
+            <div class="alert alert-info">
+                No news articles found.
+            </div>
+        }
+        else
+        {
+            @foreach (var news in Model)
+            {
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <h5 class="card-title">
+                            <a asp-action="Details" asp-route-id="@news.NewsArticleID" class="text-decoration-none">
+                                @news.NewsTitle
+                            </a>
+                        </h5>
+                        @if (!string.IsNullOrEmpty(news.Headline))
+                        {
+                            <p class="card-text text-muted">@news.Headline</p>
+                        }
+                        <p class="card-text">
+                            <small class="text-muted">
+                                @(news.CreatedDate?.ToString("MMM dd, yyyy") ?? "N/A") | 
+                                Category ID: @news.CategoryID
+                            </small>
+                        </p>
+                        <a asp-action="Details" asp-route-id="@news.NewsArticleID" class="btn btn-primary btn-sm">Read More</a>
+                    </div>
+                </div>
+            }
+        }
+    </div>
+    
+    <div class="col-md-3">
+        <div class="card">
+            <div class="card-header">
+                <h6>Categories</h6>
+            </div>
+            <div class="card-body">
+                @if (ViewBag.Categories != null)
+                {
+                    @foreach (var category in ViewBag.Categories)
+                    {
+                        <a asp-action="Category" asp-route-id="@category.CategoryID" class="d-block text-decoration-none mb-2">
+                            @category.CategoryName
+                        </a>
+                    }
+                }
+            </div>
+        </div>
+        
+        <div class="card mt-3">
+            <div class="card-header">
+                <h6>Search</h6>
+            </div>
+            <div class="card-body">
+                <form asp-action="Search" method="get">
+                    <div class="input-group">
+                        <input type="text" name="searchTerm" class="form-control" placeholder="Search news..." 
+                               value="@ViewBag.SearchTerm" />
+                        <button type="submit" class="btn btn-outline-secondary">Search</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

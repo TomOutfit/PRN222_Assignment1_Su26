@@ -1,0 +1,52 @@
+@{
+    ViewData["Title"] = "Staff Dashboard";
+}
+
+<div class="row">
+    <div class="col-md-12">
+        <h1>Staff Dashboard</h1>
+        <p class="text-muted">Welcome to the Staff Management Panel</p>
+        
+        <div class="row">
+            <div class="col-md-3">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <h5 class="card-title">Categories</h5>
+                        <p class="card-text">Manage news categories</p>
+                        <a asp-action="Categories" class="btn btn-primary">Manage</a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-3">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <h5 class="card-title">News Articles</h5>
+                        <p class="card-text">Create and manage news</p>
+                        <a asp-action="News" class="btn btn-primary">Manage</a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-3">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <h5 class="card-title">Profile</h5>
+                        <p class="card-text">Update your profile</p>
+                        <a asp-action="Profile" class="btn btn-primary">Manage</a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-3">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <h5 class="card-title">News History</h5>
+                        <p class="card-text">View your news history</p>
+                        <a asp-action="NewsHistory" class="btn btn-primary">View</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

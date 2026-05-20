@@ -1,0 +1,55 @@
+@model NguyenBinhAn_A01_Data.Models.SystemAccount
+@{
+    ViewData["Title"] = "Profile";
+}
+
+<div class="row">
+    <div class="col-md-6">
+        <h1>My Profile</h1>
+        
+        @if (ViewBag.SuccessMessage != null)
+        {
+            <div class="alert alert-success">
+                @ViewBag.SuccessMessage
+            </div>
+        }
+        
+        <form asp-action="Profile" method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="AccountID" />
+            
+            <div class="form-group mb-3">
+                <label asp-for="AccountName" class="form-label"></label>
+                <input asp-for="AccountName" class="form-control" />
+                <span asp-validation-for="AccountName" class="text-danger"></span>
+            </div>
+            
+            <div class="form-group mb-3">
+                <label asp-for="AccountEmail" class="form-label"></label>
+                <input asp-for="AccountEmail" class="form-control" readonly />
+                <small class="form-text text-muted">Email cannot be changed.</small>
+            </div>
+            
+            <div class="form-group mb-3">
+                <label asp-for="AccountPassword" class="form-label">New Password</label>
+                <input asp-for="AccountPassword" class="form-control" type="password" placeholder="Enter new password or leave blank to keep current" />
+                <span asp-validation-for="AccountPassword" class="text-danger"></span>
+            </div>
+            
+            <div class="form-group mb-3">
+                <label class="form-label">Current Role</label>
+                <input type="text" class="form-control" readonly value="@(Model.AccountRole == 0 ? "Admin" : Model.AccountRole == 1 ? "Staff" : "Lecturer")" />
+                <small class="form-text text-muted">Role cannot be changed.</small>
+            </div>
+            
+            <div class="form-group">
+                <button type="submit" class="btn btn-primary">Update Profile</button>
+                <a asp-action="Dashboard" class="btn btn-secondary">Back to Dashboard</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
