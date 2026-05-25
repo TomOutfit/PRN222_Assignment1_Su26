@@ -64,5 +64,10 @@ namespace NguyenBinhAn_A01_Business.Services
         {
             return !(await _categoryRepository.HasNewsArticlesAsync(categoryId));
         }
+
+        public async Task<int> GetCategoryCountAsync()
+        {
+            return await _categoryRepository.CountAsync(c => c.IsActive == true);
+        }
     }
 }

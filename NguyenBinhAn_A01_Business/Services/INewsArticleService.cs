@@ -15,5 +15,8 @@ namespace NguyenBinhAn_A01_Business.Services
         Task DeleteNewsAsync(string id);
         Task<IEnumerable<NewsArticle>> GetNewsHistoryAsync(short authorId);
         Task<List<int>> GetTagIdsByNewsIdAsync(string newsArticleId);
+        Task<int> GetTotalNewsCountAsync();
+        Task<int> GetActiveNewsCountAsync();
+        Task<int> GetUserNewsCountAsync(short authorId);
     }
 }

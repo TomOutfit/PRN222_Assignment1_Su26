@@ -12,5 +12,6 @@ namespace NguyenBinhAn_A01_Business.Services
         Task<Category> UpdateCategoryAsync(Category category);
         Task DeleteCategoryAsync(short id);
         Task<bool> CanDeleteCategoryAsync(short categoryId);
+        Task<int> GetCategoryCountAsync();
     }
 }

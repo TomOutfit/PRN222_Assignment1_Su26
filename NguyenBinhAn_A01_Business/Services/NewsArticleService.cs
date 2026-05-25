@@ -153,5 +153,20 @@ namespace NguyenBinhAn_A01_Business.Services
         {
             return await _newsArticleRepository.GetTagIdsByNewsIdAsync(newsArticleId);
         }
+
+        public async Task<int> GetTotalNewsCountAsync()
+        {
+            return await _context.NewsArticles.CountAsync();
+        }
+
+        public async Task<int> GetActiveNewsCountAsync()
+        {
+            return await _context.NewsArticles.CountAsync(n => n.NewsStatus == true);
+        }
+
+        public async Task<int> GetUserNewsCountAsync(short authorId)
+        {
+            return await _context.NewsArticles.CountAsync(n => n.CreatedByID == authorId);
+        }
     }
 }

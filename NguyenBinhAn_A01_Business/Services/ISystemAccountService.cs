@@ -13,5 +13,7 @@ namespace NguyenBinhAn_A01_Business.Services
         Task<IEnumerable<SystemAccount>> GetAccountsByRoleAsync(short role);
         Task<bool> IsEmailExistsAsync(string email, short? excludeId = null);
         Task<short> GetNextAccountIdAsync();
+        Task<int> GetTotalAccountCountAsync();
+        Task<int> GetAccountCountByRoleAsync(short role);
     }
 }

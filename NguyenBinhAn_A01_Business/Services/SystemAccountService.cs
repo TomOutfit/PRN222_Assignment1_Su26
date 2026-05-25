@@ -71,5 +71,15 @@ namespace NguyenBinhAn_A01_Business.Services
                 .MaxAsync(a => (short?)a.AccountID) ?? 0;
             return (short)(maxId + 1);
         }
+
+        public async Task<int> GetTotalAccountCountAsync()
+        {
+            return await _context.SystemAccounts.CountAsync();
+        }
+
+        public async Task<int> GetAccountCountByRoleAsync(short role)
+        {
+            return await _context.SystemAccounts.CountAsync(a => a.AccountRole == role);
+        }
     }
 }
