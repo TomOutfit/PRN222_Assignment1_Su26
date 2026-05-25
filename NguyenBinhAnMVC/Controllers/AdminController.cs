@@ -19,11 +19,32 @@ namespace NguyenBinhAnMVC.Controllers
             _categoryService = categoryService;
         }
 
-        public IActionResult Dashboard()
+        public async Task<IActionResult> Dashboard()
         {
             var authResult = RequireAdminRole();
             if (authResult != null) return authResult;
+
+            ViewBag.TotalAccounts = await _systemAccountService.GetTotalAccountCountAsync();
+            ViewBag.StaffCount = await _systemAccountService.GetAccountCountByRoleAsync(1);
+            ViewBag.LecturerCount = await _systemAccountService.GetAccountCountByRoleAsync(2);
+            ViewBag.TotalNews = await _newsArticleService.GetTotalNewsCountAsync();
+
             return View();
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetStats()
+        {
+            var authResult = RequireAdminRole();
+            if (authResult != null) return Unauthorized();
+
+            return Json(new
+            {
+                totalAccounts = await _systemAccountService.GetTotalAccountCountAsync(),
+                staffCount = await _systemAccountService.GetAccountCountByRoleAsync(1),
+                lecturerCount = await _systemAccountService.GetAccountCountByRoleAsync(2),
+                totalNews = await _newsArticleService.GetTotalNewsCountAsync()
+            });
         }
 
         // ── Account Management ──────────────────────────────────────────────

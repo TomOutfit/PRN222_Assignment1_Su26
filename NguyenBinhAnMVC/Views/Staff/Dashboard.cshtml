@@ -158,7 +158,7 @@
                     <i class="bi bi-folder"></i>
                 </div>
                 <div>
-                    <div class="stat-number">@ViewBag.CategoryCount</div>
+                    <div class="stat-number" data-stat="categoryCount">@ViewBag.CategoryCount</div>
                     <div class="stat-label">Categories</div>
                 </div>
             </div>
@@ -171,7 +171,7 @@
                     <i class="bi bi-newspaper"></i>
                 </div>
                 <div>
-                    <div class="stat-number">@ViewBag.NewsCount</div>
+                    <div class="stat-number" data-stat="newsCount">@ViewBag.NewsCount</div>
                     <div class="stat-label">News Articles</div>
                 </div>
             </div>
@@ -184,7 +184,7 @@
                     <i class="bi bi-check-circle"></i>
                 </div>
                 <div>
-                    <div class="stat-number">@ViewBag.ActiveNewsCount</div>
+                    <div class="stat-number" data-stat="activeNewsCount">@ViewBag.ActiveNewsCount</div>
                     <div class="stat-label">Active Articles</div>
                 </div>
             </div>
@@ -197,7 +197,7 @@
                     <i class="bi bi-clock-history"></i>
                 </div>
                 <div>
-                    <div class="stat-number">@ViewBag.UserNewsCount</div>
+                    <div class="stat-number" data-stat="userNewsCount">@ViewBag.UserNewsCount</div>
                     <div class="stat-label">Your Articles</div>
                 </div>
             </div>
@@ -267,3 +267,43 @@
         </div>
     </div>
 </div>
+
+@section Scripts {
+    <script>
+        async function fetchStats() {
+            try {
+                const response = await fetch('/Staff/GetStats');
+                if (!response.ok) return;
+                const data = await response.json();
+
+                const statMap = {
+                    categoryCount: data.categoryCount,
+                    newsCount: data.newsCount,
+                    activeNewsCount: data.activeNewsCount,
+                    userNewsCount: data.userNewsCount
+                };
+
+                for (const [key, value] of Object.entries(statMap)) {
+                    const el = document.querySelector(`[data-stat="${key}"]`);
+                    if (el && el.textContent.trim() !== String(value)) {
+                        el.textContent = value;
+                        el.style.animation = 'none';
+                        el.offsetHeight;
+                        el.style.animation = 'popIn 0.3s ease';
+                    }
+                }
+            } catch (e) {
+                console.error('Failed to fetch stats:', e);
+            }
+        }
+
+        setInterval(fetchStats, 5000);
+    </script>
+    <style>
+        @@keyframes popIn {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.15); color: #11998e; }
+            100% { transform: scale(1); }
+        }
+    </style>
+}

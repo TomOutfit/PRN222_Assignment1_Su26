@@ -20,11 +20,34 @@ namespace NguyenBinhAnMVC.Controllers
             _systemAccountService = systemAccountService;
         }
 
-        public IActionResult Dashboard()
+        public async Task<IActionResult> Dashboard()
         {
             var authResult = RequireStaffRole();
             if (authResult != null) return authResult;
+
+            var userId = GetCurrentUserId()!.Value;
+            ViewBag.CategoryCount = await _categoryService.GetCategoryCountAsync();
+            ViewBag.NewsCount = await _newsArticleService.GetTotalNewsCountAsync();
+            ViewBag.ActiveNewsCount = await _newsArticleService.GetActiveNewsCountAsync();
+            ViewBag.UserNewsCount = await _newsArticleService.GetUserNewsCountAsync(userId);
+
             return View();
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetStats()
+        {
+            var authResult = RequireStaffRole();
+            if (authResult != null) return Unauthorized();
+
+            var userId = GetCurrentUserId()!.Value;
+            return Json(new
+            {
+                categoryCount = await _categoryService.GetCategoryCountAsync(),
+                newsCount = await _newsArticleService.GetTotalNewsCountAsync(),
+                activeNewsCount = await _newsArticleService.GetActiveNewsCountAsync(),
+                userNewsCount = await _newsArticleService.GetUserNewsCountAsync(userId)
+            });
         }
 
         // ── Category Management ─────────────────────────────────────────────
