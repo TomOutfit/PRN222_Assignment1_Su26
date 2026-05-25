@@ -1,0 +1,456 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - FUNews Management System</title>
+    <script type="importmap"></script>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/NguyenBinhAnMVC.styles.css" asp-append-version="true" />
+    <style>
+        * {
+            font-family: 'Inter', sans-serif;
+        }
+        
+        html, body {
+            height: 100%;
+        }
+        
+        body {
+            background: #f8f9fa;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .main-content {
+            flex: 1;
+        }
+        
+        /* Modern Header */
+        .navbar-modern {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            padding: 0;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+        }
+        
+        .navbar-modern .navbar-brand {
+            color: white;
+            font-weight: 700;
+            font-size: 1.3rem;
+            padding: 18px 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.3s;
+        }
+        
+        .navbar-modern .navbar-brand:hover {
+            color: #667eea;
+        }
+        
+        .navbar-modern .navbar-brand i {
+            font-size: 1.5rem;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .navbar-modern .navbar-toggler {
+            border-color: rgba(255, 255, 255, 0.3);
+            margin-right: 15px;
+        }
+        
+        .navbar-modern .navbar-toggler-icon {
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba%28255, 255, 255, 0.8%29' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+        }
+        
+        .navbar-modern .nav-link {
+            color: rgba(255, 255, 255, 0.85);
+            padding: 18px 15px;
+            font-weight: 500;
+            transition: all 0.3s;
+            position: relative;
+        }
+        
+        .navbar-modern .nav-link:hover,
+        .navbar-modern .nav-link:focus {
+            color: white;
+        }
+        
+        .navbar-modern .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 3px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            transition: width 0.3s;
+            border-radius: 3px 3px 0 0;
+        }
+        
+        .navbar-modern .nav-link:hover::after {
+            width: 80%;
+        }
+        
+        .navbar-modern .nav-item.dropdown .nav-link.dropdown-toggle::after {
+            display: none;
+        }
+        
+        .navbar-modern .dropdown-menu {
+            border: none;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+            padding: 10px;
+            margin-top: 0;
+            background: white;
+        }
+        
+        .navbar-modern .dropdown-menu .dropdown-item {
+            border-radius: 8px;
+            padding: 10px 15px;
+            color: #333;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+        
+        .navbar-modern .dropdown-menu .dropdown-item:hover {
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+            color: #667eea;
+        }
+        
+        .navbar-modern .dropdown-menu .dropdown-item i {
+            margin-right: 10px;
+            color: #667eea;
+        }
+        
+        .navbar-modern .nav-item .nav-link.text-dark {
+            color: rgba(255, 255, 255, 0.85) !important;
+        }
+        
+        .navbar-modern .nav-item .nav-link.text-dark:hover {
+            color: white !important;
+        }
+        
+        .user-badge {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 6px 15px;
+            border-radius: 20px;
+            color: white;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin: 10px 0;
+        }
+        
+        .user-badge i {
+            font-size: 1.2rem;
+        }
+        
+        /* Modern Footer */
+        .footer-modern {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            color: rgba(255, 255, 255, 0.8);
+            padding: 50px 0 0;
+            margin-top: auto;
+            width: 100%;
+        }
+        
+        .footer-modern .container {
+            max-width: 1200px;
+        }
+        
+        .footer-modern .footer-brand {
+            color: white;
+            font-weight: 700;
+            font-size: 1.3rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        
+        .footer-modern .footer-brand i {
+            font-size: 1.5rem;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .footer-modern .footer-links {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        
+        .footer-modern .footer-links li {
+            margin-bottom: 10px;
+        }
+        
+        .footer-modern .footer-links a {
+            color: rgba(255, 255, 255, 0.7);
+            text-decoration: none;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .footer-modern .footer-links a:hover {
+            color: white;
+            padding-left: 5px;
+        }
+        
+        .footer-modern .footer-links a i {
+            color: #667eea;
+        }
+        
+        .footer-modern .footer-divider {
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            margin: 30px 0 20px;
+        }
+        
+        .footer-modern .footer-bottom {
+            text-align: center;
+            padding: 20px 0;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .footer-modern .footer-bottom p {
+            margin: 0;
+            font-size: 0.9rem;
+            opacity: 0.7;
+        }
+        
+        .footer-modern .footer-bottom a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 500;
+        }
+        
+        .footer-modern .footer-bottom a:hover {
+            color: #764ba2;
+            text-decoration: underline;
+        }
+        
+        .footer-modern .social-links {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-bottom: 15px;
+        }
+        
+        .footer-modern .social-links a {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            transition: all 0.3s;
+        }
+        
+        .footer-modern .social-links a:hover {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            transform: translateY(-3px);
+        }
+        
+        .footer-section-title {
+            color: white;
+            font-weight: 600;
+            margin-bottom: 15px;
+            font-size: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav class="navbar navbar-expand-sm navbar-modern">
+            <div class="container-fluid">
+                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">
+                    <i class="bi bi-newspaper"></i>
+                    FUNews
+                </a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
+                        aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
+                    <ul class="navbar-nav flex-grow-1">
+                        @{
+                            var userEmail = Context.Session.GetString("UserEmail");
+                            var userRole = Context.Session.GetInt32("UserRole");
+                        }
+                        
+                        @if (string.IsNullOrEmpty(userEmail))
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Index">
+                                    <i class="bi bi-house me-1"></i>Home
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Privacy">
+                                    <i class="bi bi-shield-lock me-1"></i>Privacy
+                                </a>
+                            </li>
+                        }
+                        else
+                        {
+                            if (userRole == 0)
+                            {
+                                <li class="nav-item dropdown">
+                                    <a class="nav-link dropdown-toggle" href="#" id="adminDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                        <i class="bi bi-shield me-1"></i>Admin
+                                    </a>
+                                    <ul class="dropdown-menu">
+                                        <li><a class="dropdown-item" asp-area="" asp-controller="Admin" asp-action="Dashboard"><i class="bi bi-speedometer2"></i>Dashboard</a></li>
+                                        <li><a class="dropdown-item" asp-area="" asp-controller="Admin" asp-action="Accounts"><i class="bi bi-people"></i>Manage Accounts</a></li>
+                                        <li><a class="dropdown-item" asp-area="" asp-controller="Admin" asp-action="Reports"><i class="bi bi-bar-chart"></i>Reports</a></li>
+                                    </ul>
+                                </li>
+                            }
+                            
+                            if (userRole == 1)
+                            {
+                                <li class="nav-item dropdown">
+                                    <a class="nav-link dropdown-toggle" href="#" id="staffDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                        <i class="bi bi-briefcase me-1"></i>Staff
+                                    </a>
+                                    <ul class="dropdown-menu">
+                                        <li><a class="dropdown-item" asp-area="" asp-controller="Staff" asp-action="Dashboard"><i class="bi bi-speedometer2"></i>Dashboard</a></li>
+                                        <li><a class="dropdown-item" asp-area="" asp-controller="Staff" asp-action="Categories"><i class="bi bi-folder"></i>Manage Categories</a></li>
+                                        <li><a class="dropdown-item" asp-area="" asp-controller="Staff" asp-action="News"><i class="bi bi-newspaper"></i>Manage News</a></li>
+                                        <li><a class="dropdown-item" asp-area="" asp-controller="Staff" asp-action="Profile"><i class="bi bi-person"></i>Profile</a></li>
+                                        <li><a class="dropdown-item" asp-area="" asp-controller="Staff" asp-action="NewsHistory"><i class="bi bi-clock-history"></i>News History</a></li>
+                                    </ul>
+                                </li>
+                            }
+                            
+                            if (userRole == 2)
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link" asp-area="" asp-controller="Lecturer" asp-action="Index">
+                                        <i class="bi bi-newspaper me-1"></i>News
+                                    </a>
+                                </li>
+                            }
+                            
+                            <li class="nav-item">
+                                <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Index">
+                                    <i class="bi bi-globe me-1"></i>Public News
+                                </a>
+                            </li>
+                        }
+                    </ul>
+                    
+                    <ul class="navbar-nav">
+                        @if (string.IsNullOrEmpty(userEmail))
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link" asp-area="" asp-controller="Auth" asp-action="Login">
+                                    <i class="bi bi-box-arrow-in-right me-1"></i>Login
+                                </a>
+                            </li>
+                        }
+                        else
+                        {
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <i class="bi bi-person-circle me-1"></i>@Context.Session.GetString("UserName")
+                                </a>
+                                <ul class="dropdown-menu dropdown-menu-end">
+                                    <li>
+                                        <form asp-controller="Auth" asp-action="Logout" method="post" class="d-inline">
+                                            @Html.AntiForgeryToken()
+                                            <button type="submit" class="dropdown-item">
+                                                <i class="bi bi-box-arrow-right"></i>Logout
+                                            </button>
+                                        </form>
+                                    </li>
+                                </ul>
+                            </li>
+                        }
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main class="main-content">
+        <div class="container pb-4">
+            @RenderBody()
+        </div>
+    </main>
+
+    <footer class="footer-modern">
+        <div class="container">
+            <div class="row g-4">
+                <div class="col-lg-4">
+                    <div class="footer-brand">
+                        <i class="bi bi-newspaper"></i>
+                        FUNews Management
+                    </div>
+                    <p style="font-size: 0.9rem; opacity: 0.7; margin-bottom: 0;">
+                        A modern news management system for distance learning platforms. Create, manage, and publish news articles with ease.
+                    </p>
+                </div>
+                <div class="col-lg-2 col-md-4">
+                    <h6 class="footer-section-title">Quick Links</h6>
+                    <ul class="footer-links">
+                        <li><a asp-controller="Home" asp-action="Index"><i class="bi bi-chevron-right"></i>Home</a></li>
+                        <li><a asp-controller="Home" asp-action="Privacy"><i class="bi bi-chevron-right"></i>Privacy Policy</a></li>
+                        <li><a asp-controller="Auth" asp-action="Login"><i class="bi bi-chevron-right"></i>Login</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-3 col-md-4">
+                    <h6 class="footer-section-title">Features</h6>
+                    <ul class="footer-links">
+                        <li><a href="#"><i class="bi bi-chevron-right"></i>News Management</a></li>
+                        <li><a href="#"><i class="bi bi-chevron-right"></i>Category System</a></li>
+                        <li><a href="#"><i class="bi bi-chevron-right"></i>User Management</a></li>
+                        <li><a href="#"><i class="bi bi-chevron-right"></i>Reports</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-3 col-md-4">
+                    <h6 class="footer-section-title">Contact</h6>
+                    <ul class="footer-links">
+                        <li><a href="#"><i class="bi bi-geo-alt"></i>FPT University, Can Tho</a></li>
+                        <li><a href="#"><i class="bi bi-envelope"></i>funews@example.edu.vn</a></li>
+                        <li><a href="#"><i class="bi bi-telephone"></i>+84 123 456 789</a></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="footer-divider"></div>
+            
+            <div class="footer-bottom">
+                <div class="social-links">
+                    <a href="#"><i class="bi bi-facebook"></i></a>
+                    <a href="#"><i class="bi bi-twitter"></i></a>
+                    <a href="#"><i class="bi bi-instagram"></i></a>
+                    <a href="#"><i class="bi bi-linkedin"></i></a>
+                </div>
+                <p style="margin-bottom: 0;">
+                    &copy; 2026 <a asp-area="" asp-controller="Home" asp-action="Index">FUNews Management</a>. 
+                    All rights reserved. Powered by <a href="#">FPT Education</a>.
+                </p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

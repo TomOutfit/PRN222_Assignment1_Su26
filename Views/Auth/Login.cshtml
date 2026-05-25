@@ -1,0 +1,401 @@
+@model NguyenBinhAnMVC.Models.LoginViewModel
+@{
+    ViewData["Title"] = "Login";
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Login - FUNews</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            min-height: 100vh;
+        }
+        
+        .login-wrapper {
+            display: flex;
+            min-height: 100vh;
+        }
+        
+        /* Left Panel */
+        .login-left {
+            flex: 1;
+            background: linear-gradient(135deg, #E3F2FD 0%, #EDE7F6 100%);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 60px;
+        }
+        
+        .login-left::before {
+            content: '';
+            position: absolute;
+            top: -100px;
+            right: -100px;
+            width: 400px;
+            height: 400px;
+            background: rgba(103, 58, 183, 0.1);
+            border-radius: 50%;
+        }
+        
+        .login-left::after {
+            content: '';
+            position: absolute;
+            bottom: -150px;
+            left: -150px;
+            width: 500px;
+            height: 500px;
+            background: rgba(33, 150, 243, 0.1);
+            border-radius: 50%;
+        }
+        
+        .grid-pattern {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(rgba(103, 58, 183, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(103, 58, 183, 0.03) 1px, transparent 1px);
+            background-size: 50px 50px;
+        }
+        
+        .left-content {
+            position: relative;
+            z-index: 1;
+            max-width: 450px;
+            text-align: center;
+        }
+        
+        .left-content h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #1a1a2e;
+            margin-bottom: 20px;
+            line-height: 1.3;
+        }
+        
+        .left-content p {
+            color: #666;
+            font-size: 1.1rem;
+            line-height: 1.8;
+        }
+        
+        .left-content .quote {
+            margin-top: 40px;
+            padding: 20px 30px;
+            background: rgba(255, 255, 255, 0.7);
+            border-radius: 15px;
+            font-style: italic;
+            color: #555;
+            position: relative;
+        }
+        
+        .left-content .quote::before {
+            content: '"';
+            font-size: 60px;
+            color: rgba(103, 58, 183, 0.2);
+            position: absolute;
+            top: -10px;
+            left: 15px;
+        }
+        
+        /* Right Panel */
+        .login-right {
+            width: 520px;
+            background: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 60px;
+        }
+        
+        .login-form-container {
+            width: 100%;
+            max-width: 380px;
+        }
+        
+        .app-icon {
+            width: 70px;
+            height: 70px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+        }
+        
+        .app-icon i {
+            font-size: 35px;
+            color: white;
+        }
+        
+        .login-right h2 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #1a1a2e;
+            margin-bottom: 8px;
+        }
+        
+        .login-right .subtitle {
+            color: #888;
+            margin-bottom: 35px;
+            font-size: 0.95rem;
+        }
+        
+        .form-group {
+            margin-bottom: 22px;
+        }
+        
+        .form-group label {
+            display: block;
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: #555;
+            margin-bottom: 8px;
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 14px 16px;
+            border: 2px solid #e8e8e8;
+            border-radius: 12px;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+            background: #fafafa;
+        }
+        
+        .form-control:focus {
+            outline: none;
+            border-color: #667eea;
+            background: #fff;
+            box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+        }
+        
+        .input-group {
+            position: relative;
+        }
+        
+        .input-group .toggle-password {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            border: none;
+            background: none;
+            color: #aaa;
+            cursor: pointer;
+            padding: 5px;
+            transition: color 0.3s;
+        }
+        
+        .input-group .toggle-password:hover {
+            color: #667eea;
+        }
+        
+        .form-options {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+        
+        .remember-me {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+        }
+        
+        .remember-me input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            border-radius: 5px;
+            accent-color: #667eea;
+            cursor: pointer;
+        }
+        
+        .remember-me span {
+            margin-left: 10px;
+            font-size: 0.9rem;
+            color: #666;
+        }
+        
+        .forgot-password {
+            color: #667eea;
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+        
+        .forgot-password:hover {
+            color: #764ba2;
+        }
+        
+        .btn-login {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            border-radius: 12px;
+            color: white;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.3);
+        }
+        
+        .btn-login:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+        }
+        
+        .validation-summary {
+            background: #fef2f2;
+            border: 1px solid #fecaca;
+            border-radius: 10px;
+            padding: 12px 15px;
+            margin-bottom: 20px;
+        }
+        
+        .validation-summary ul {
+            margin: 0;
+            padding: 0;
+            list-style: none;
+        }
+        
+        .validation-summary li {
+            color: #dc2626;
+            font-size: 0.9rem;
+        }
+        
+        .text-danger {
+            color: #dc2626;
+            font-size: 0.85rem;
+            margin-top: 5px;
+            display: block;
+        }
+        
+        /* Responsive */
+        @@media (max-width: 992px) {
+            .login-wrapper {
+                flex-direction: column;
+            }
+            
+            .login-left {
+                padding: 40px 30px;
+                min-height: auto;
+            }
+            
+            .login-left h1 {
+                font-size: 1.8rem;
+            }
+            
+            .login-right {
+                width: 100%;
+                padding: 40px 30px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="login-wrapper">
+        <!-- Left Panel -->
+        <div class="login-left">
+            <div class="grid-pattern"></div>
+            <div class="left-content">
+                <h1>Digital platform for distance learning</h1>
+                <p>Stay informed with the latest news and updates from our community. Manage content efficiently with our modern news management system.</p>
+                <div class="quote">
+                    "Education is the passport to the future, for tomorrow belongs to those who prepare for it today."
+                </div>
+            </div>
+        </div>
+        
+        <!-- Right Panel -->
+        <div class="login-right">
+            <div class="login-form-container">
+                <div class="app-icon">
+                    <i class="bi bi-newspaper"></i>
+                </div>
+                
+                <h2>Hey, hello 👋</h2>
+                <p class="subtitle">Enter your information to access your account</p>
+                
+                <form asp-action="Login" method="post">
+                    <div asp-validation-summary="ModelOnly" class="validation-summary"></div>
+                    
+                    <div class="form-group">
+                        <label for="Email">Email</label>
+                        <input asp-for="Email" class="form-control" placeholder="Enter your email" />
+                        <span asp-validation-for="Email"></span>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="Password">Password</label>
+                        <div class="input-group">
+                            <input asp-for="Password" class="form-control" id="password" placeholder="Enter your password" />
+                            <button type="button" class="toggle-password" onclick="togglePassword()">
+                                <i class="bi bi-eye" id="toggleIcon"></i>
+                            </button>
+                        </div>
+                        <span asp-validation-for="Password"></span>
+                    </div>
+                    
+                    <div class="form-options">
+                        <label class="remember-me">
+                            <input type="checkbox" name="RememberMe" value="true" />
+                            <span>Remember me</span>
+                        </label>
+                        <a href="#" class="forgot-password">Forgot password?</a>
+                    </div>
+                    
+                    <button type="submit" class="btn-login">
+                        <i class="bi bi-box-arrow-in-right me-2"></i>Login
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <partial name="_ValidationScriptsPartial" />
+    
+    <script>
+        function togglePassword() {
+            const passwordInput = document.getElementById('password');
+            const toggleIcon = document.getElementById('toggleIcon');
+            
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                toggleIcon.classList.remove('bi-eye');
+                toggleIcon.classList.add('bi-eye-slash');
+            } else {
+                passwordInput.type = 'password';
+                toggleIcon.classList.remove('bi-eye-slash');
+                toggleIcon.classList.add('bi-eye');
+            }
+        }
+    </script>
+</body>
+</html>
