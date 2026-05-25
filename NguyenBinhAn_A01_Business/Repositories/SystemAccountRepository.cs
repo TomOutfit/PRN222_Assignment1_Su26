@@ -12,12 +12,15 @@ namespace NguyenBinhAn_A01_Business.Repositories
 
         public async Task<SystemAccount?> GetByEmailAsync(string email)
         {
-            return await _dbSet.FirstOrDefaultAsync(sa => sa.AccountEmail == email);
+            return await _dbSet.FirstOrDefaultAsync(sa =>
+                sa.AccountEmail != null && sa.AccountEmail.ToLower() == email.ToLower());
         }
 
         public async Task<SystemAccount?> AuthenticateAsync(string email, string password)
         {
-            return await _dbSet.FirstOrDefaultAsync(sa => sa.AccountEmail == email && sa.AccountPassword == password);
+            return await _dbSet.AsNoTracking().FirstOrDefaultAsync(sa =>
+                sa.AccountEmail != null && sa.AccountEmail.ToLower() == email.ToLower()
+                && sa.AccountPassword == password);
         }
 
         public async Task<IEnumerable<SystemAccount>> GetAccountsByRoleAsync(short role)
