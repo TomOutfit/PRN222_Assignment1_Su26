@@ -130,6 +130,20 @@
         color: #888;
         font-size: 0.9rem;
     }
+
+    .chart-card {
+        background: white;
+        border-radius: 20px;
+        padding: 25px;
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
+    }
+
+    .chart-card .chart-title {
+        font-weight: 600;
+        color: #1a1a2e;
+        margin-bottom: 20px;
+        font-size: 1.1rem;
+    }
 </style>
 
 <!-- Dashboard Header -->
@@ -253,8 +267,98 @@
     </div>
 </div>
 
+<!-- Charts Section -->
+<div class="row g-4 mb-4">
+    <div class="col-md-4">
+        <div class="chart-card">
+            <div class="chart-title"><i class="bi bi-pie-chart me-2"></i>Accounts by Role</div>
+            <canvas id="accountsByRoleChart" height="220"></canvas>
+        </div>
+    </div>
+    <div class="col-md-8">
+        <div class="chart-card">
+            <div class="chart-title"><i class="bi bi-bar-chart me-2"></i>News Articles (Last 6 Months)</div>
+            <canvas id="newsPerMonthChart" height="110"></canvas>
+        </div>
+    </div>
+</div>
+
 @section Scripts {
     <script>
+        let accountsByRoleChart, newsPerMonthChart;
+
+        async function fetchChartData() {
+            try {
+                const response = await fetch('/Admin/GetChartData');
+                if (!response.ok) return;
+                const data = await response.json();
+
+                // Doughnut: Accounts by Role
+                const roleLabels = Object.keys(data.accountsByRole);
+                const roleValues = Object.values(data.accountsByRole);
+                const roleColors = ['#667eea', '#f5576c', '#38f9d7', '#ff8e53'];
+
+                if (accountsByRoleChart) {
+                    accountsByRoleChart.data.labels = roleLabels;
+                    accountsByRoleChart.data.datasets[0].data = roleValues;
+                    accountsByRoleChart.data.datasets[0].backgroundColor = roleColors.slice(0, roleLabels.length);
+                    accountsByRoleChart.update();
+                } else {
+                    const ctx = document.getElementById('accountsByRoleChart').getContext('2d');
+                    accountsByRoleChart = new Chart(ctx, {
+                        type: 'doughnut',
+                        data: {
+                            labels: roleLabels,
+                            datasets: [{
+                                data: roleValues,
+                                backgroundColor: roleColors.slice(0, roleLabels.length),
+                                borderWidth: 0
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            plugins: { legend: { position: 'bottom', labels: { padding: 15, usePointStyle: true } } }
+                        }
+                    });
+                }
+
+                // Bar: News per Month
+                const monthLabels = data.newsPerMonth.map(m => m.label);
+                const monthCounts = data.newsPerMonth.map(m => m.count);
+
+                if (newsPerMonthChart) {
+                    newsPerMonthChart.data.labels = monthLabels;
+                    newsPerMonthChart.data.datasets[0].data = monthCounts;
+                    newsPerMonthChart.update();
+                } else {
+                    const ctx2 = document.getElementById('newsPerMonthChart').getContext('2d');
+                    newsPerMonthChart = new Chart(ctx2, {
+                        type: 'bar',
+                        data: {
+                            labels: monthLabels,
+                            datasets: [{
+                                label: 'Articles',
+                                data: monthCounts,
+                                backgroundColor: 'rgba(102, 126, 234, 0.7)',
+                                borderColor: '#667eea',
+                                borderWidth: 1,
+                                borderRadius: 8
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            plugins: { legend: { display: false } },
+                            scales: {
+                                y: { beginAtZero: true, ticks: { stepSize: 1 } }
+                            }
+                        }
+                    });
+                }
+            } catch (e) {
+                console.error('Failed to fetch chart data:', e);
+            }
+        }
+
         async function fetchStats() {
             try {
                 const response = await fetch('/Admin/GetStats');
@@ -282,6 +386,9 @@
             }
         }
 
+        fetchChartData();
+        fetchStats();
+        setInterval(fetchChartData, 10000);
         setInterval(fetchStats, 5000);
     </script>
     <style>

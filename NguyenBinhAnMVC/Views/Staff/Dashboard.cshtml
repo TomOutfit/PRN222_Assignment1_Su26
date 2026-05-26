@@ -130,6 +130,20 @@
         color: #888;
         font-size: 0.9rem;
     }
+
+    .chart-card {
+        background: white;
+        border-radius: 20px;
+        padding: 25px;
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
+    }
+
+    .chart-card .chart-title {
+        font-weight: 600;
+        color: #1a1a2e;
+        margin-bottom: 20px;
+        font-size: 1.1rem;
+    }
 </style>
 
 <!-- Dashboard Header -->
@@ -268,8 +282,102 @@
     </div>
 </div>
 
+<!-- Charts Section -->
+<div class="row g-4 mb-4">
+    <div class="col-md-6">
+        <div class="chart-card">
+            <div class="chart-title"><i class="bi bi-pie-chart me-2"></i>News by Category</div>
+            <canvas id="newsByCategoryChart" height="220"></canvas>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="chart-card">
+            <div class="chart-title"><i class="bi bi-bar-chart me-2"></i>Active vs Inactive Articles</div>
+            <canvas id="activeVsInactiveChart" height="220"></canvas>
+        </div>
+    </div>
+</div>
+
 @section Scripts {
     <script>
+        let newsByCategoryChart, activeVsInactiveChart;
+
+        const categoryColors = [
+            '#667eea', '#f5576c', '#38f9d7', '#ff8e53',
+            '#764ba2', '#4facfe', '#f093fb', '#00f2fe',
+            '#43e97b', '#ff6b6b', '#38ef7d', '#11998e'
+        ];
+
+        async function fetchChartData() {
+            try {
+                const response = await fetch('/Staff/GetChartData');
+                if (!response.ok) return;
+                const data = await response.json();
+
+                // Doughnut: News by Category
+                const catLabels = Object.keys(data.newsByCategory);
+                const catValues = Object.values(data.newsByCategory);
+
+                if (newsByCategoryChart) {
+                    newsByCategoryChart.data.labels = catLabels;
+                    newsByCategoryChart.data.datasets[0].data = catValues;
+                    newsByCategoryChart.update();
+                } else {
+                    const ctx = document.getElementById('newsByCategoryChart').getContext('2d');
+                    newsByCategoryChart = new Chart(ctx, {
+                        type: 'doughnut',
+                        data: {
+                            labels: catLabels,
+                            datasets: [{
+                                data: catValues,
+                                backgroundColor: catColors.slice(0, catLabels.length),
+                                borderWidth: 0
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            plugins: { legend: { position: 'bottom', labels: { padding: 15, usePointStyle: true } } }
+                        }
+                    });
+                }
+
+                // Bar: Active vs Inactive
+                const statusLabels = Object.keys(data.activeVsInactive);
+                const statusValues = Object.values(data.activeVsInactive);
+
+                if (activeVsInactiveChart) {
+                    activeVsInactiveChart.data.labels = statusLabels;
+                    activeVsInactiveChart.data.datasets[0].data = statusValues;
+                    activeVsInactiveChart.update();
+                } else {
+                    const ctx2 = document.getElementById('activeVsInactiveChart').getContext('2d');
+                    activeVsInactiveChart = new Chart(ctx2, {
+                        type: 'bar',
+                        data: {
+                            labels: statusLabels,
+                            datasets: [{
+                                label: 'Articles',
+                                data: statusValues,
+                                backgroundColor: ['rgba(67, 233, 123, 0.7)', 'rgba(245, 87, 108, 0.7)'],
+                                borderColor: ['#43e97b', '#f5576c'],
+                                borderWidth: 1,
+                                borderRadius: 8
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            plugins: { legend: { display: false } },
+                            scales: {
+                                y: { beginAtZero: true, ticks: { stepSize: 1 } }
+                            }
+                        }
+                    });
+                }
+            } catch (e) {
+                console.error('Failed to fetch chart data:', e);
+            }
+        }
+
         async function fetchStats() {
             try {
                 const response = await fetch('/Staff/GetStats');
@@ -297,6 +405,9 @@
             }
         }
 
+        fetchChartData();
+        fetchStats();
+        setInterval(fetchChartData, 10000);
         setInterval(fetchStats, 5000);
     </script>
     <style>
