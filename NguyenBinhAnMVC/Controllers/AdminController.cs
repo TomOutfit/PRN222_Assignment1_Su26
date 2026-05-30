@@ -9,14 +9,17 @@ namespace NguyenBinhAnMVC.Controllers
         private readonly ISystemAccountService _systemAccountService;
         private readonly INewsArticleService _newsArticleService;
         private readonly ICategoryService _categoryService;
+        private readonly IDashboardService _dashboardService;
 
         public AdminController(ISystemAccountService systemAccountService,
             INewsArticleService newsArticleService,
-            ICategoryService categoryService)
+            ICategoryService categoryService,
+            IDashboardService dashboardService)
         {
             _systemAccountService = systemAccountService;
             _newsArticleService = newsArticleService;
             _categoryService = categoryService;
+            _dashboardService = dashboardService;
         }
 
         public async Task<IActionResult> Dashboard()
@@ -44,6 +47,22 @@ namespace NguyenBinhAnMVC.Controllers
                 staffCount = await _systemAccountService.GetAccountCountByRoleAsync(1),
                 lecturerCount = await _systemAccountService.GetAccountCountByRoleAsync(2),
                 totalNews = await _newsArticleService.GetTotalNewsCountAsync()
+            });
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetChartData()
+        {
+            var authResult = RequireAdminRole();
+            if (authResult != null) return Unauthorized();
+
+            var accountsByRole = await _dashboardService.GetAccountsByRoleAsync();
+            var newsPerMonth = await _dashboardService.GetNewsPerMonthAsync();
+
+            return Json(new
+            {
+                accountsByRole,
+                newsPerMonth
             });
         }
 

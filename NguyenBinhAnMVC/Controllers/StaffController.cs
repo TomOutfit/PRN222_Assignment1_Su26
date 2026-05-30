@@ -10,14 +10,17 @@ namespace NguyenBinhAnMVC.Controllers
         private readonly INewsArticleService _newsArticleService;
         private readonly ITagService _tagService;
         private readonly ISystemAccountService _systemAccountService;
+        private readonly IDashboardService _dashboardService;
 
         public StaffController(ICategoryService categoryService, INewsArticleService newsArticleService,
-            ITagService tagService, ISystemAccountService systemAccountService)
+            ITagService tagService, ISystemAccountService systemAccountService,
+            IDashboardService dashboardService)
         {
             _categoryService = categoryService;
             _newsArticleService = newsArticleService;
             _tagService = tagService;
             _systemAccountService = systemAccountService;
+            _dashboardService = dashboardService;
         }
 
         public async Task<IActionResult> Dashboard()
@@ -48,6 +51,18 @@ namespace NguyenBinhAnMVC.Controllers
                 activeNewsCount = await _newsArticleService.GetActiveNewsCountAsync(),
                 userNewsCount = await _newsArticleService.GetUserNewsCountAsync(userId)
             });
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetChartData()
+        {
+            var authResult = RequireStaffRole();
+            if (authResult != null) return Unauthorized();
+
+            var newsByCategory = await _dashboardService.GetNewsByCategoryAsync();
+            var activeVsInactive = await _dashboardService.GetActiveVsInactiveAsync();
+
+            return Json(new { newsByCategory, activeVsInactive });
         }
 
         // ── Category Management ─────────────────────────────────────────────

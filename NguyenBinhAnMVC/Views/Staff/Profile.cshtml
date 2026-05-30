@@ -1,52 +1,379 @@
 @model NguyenBinhAn_A01_Data.Models.SystemAccount
 @{
-    ViewData["Title"] = "Profile";
+    ViewData["Title"] = "My Profile";
+    var roleLabel = Model.AccountRole switch {
+        0 => "Admin",
+        1 => "Staff",
+        _ => "Lecturer"
+    };
+    var roleColor = Model.AccountRole switch {
+        0 => "#667eea",
+        1 => "#38ef7d",
+        _ => "#f5576c"
+    };
 }
 
-<div class="row">
-    <div class="col-md-6">
-        <h1>My Profile</h1>
-        
-        @if (ViewBag.SuccessMessage != null)
-        {
-            <div class="alert alert-success">
-                @ViewBag.SuccessMessage
+<style>
+    .page-header {
+        background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+        color: white;
+        padding: 40px 0;
+        margin-bottom: 40px;
+        border-radius: 0 0 30px 30px;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .page-header::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        left: -10%;
+        width: 400px;
+        height: 400px;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 50%;
+    }
+
+    .page-header h1 {
+        font-weight: 700;
+        position: relative;
+        z-index: 1;
+    }
+
+    .page-header p {
+        opacity: 0.9;
+        position: relative;
+        z-index: 1;
+    }
+
+    .profile-card {
+        background: white;
+        border-radius: 20px;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+        overflow: hidden;
+    }
+
+    .profile-card .profile-header {
+        background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+        padding: 40px 30px 0;
+        text-align: center;
+        position: relative;
+    }
+
+    .profile-card .profile-header::after {
+        content: '';
+        position: absolute;
+        bottom: -1px;
+        left: 0;
+        right: 0;
+        height: 40px;
+        background: white;
+        border-radius: 50% 50% 0 0;
+    }
+
+    .profile-avatar {
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.25);
+        border: 4px solid white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 16px;
+        font-size: 42px;
+        color: white;
+        position: relative;
+        z-index: 1;
+    }
+
+    .profile-name {
+        font-size: 1.4rem;
+        font-weight: 700;
+        color: white;
+        margin-bottom: 4px;
+    }
+
+    .profile-role {
+        display: inline-block;
+        padding: 4px 16px;
+        border-radius: 20px;
+        background: rgba(255, 255, 255, 0.25);
+        color: white;
+        font-size: 0.85rem;
+        font-weight: 600;
+        margin-bottom: 24px;
+    }
+
+    .profile-info-list {
+        list-style: none;
+        padding: 20px 30px 30px;
+        margin: 0;
+    }
+
+    .profile-info-list li {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        padding: 14px 0;
+        border-bottom: 1px solid #f0f0f0;
+    }
+
+    .profile-info-list li:last-child {
+        border-bottom: none;
+    }
+
+    .profile-info-list .info-icon {
+        width: 38px;
+        height: 38px;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 16px;
+        flex-shrink: 0;
+    }
+
+    .profile-info-list .info-label {
+        font-size: 0.78rem;
+        color: #aaa;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        margin-bottom: 2px;
+    }
+
+    .profile-info-list .info-value {
+        font-weight: 600;
+        color: #1a1a2e;
+    }
+
+    .edit-card {
+        background: white;
+        border-radius: 20px;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+        overflow: hidden;
+    }
+
+    .edit-card .card-header-custom {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 20px 28px;
+        font-weight: 600;
+        font-size: 1.05rem;
+    }
+
+    .edit-card .card-header-custom i {
+        margin-right: 8px;
+    }
+
+    .edit-card .card-body-custom {
+        padding: 28px;
+    }
+
+    .form-control-modern {
+        border-radius: 12px;
+        padding: 12px 16px;
+        border: 2px solid #e8e8e8;
+        transition: all 0.3s;
+    }
+
+    .form-control-modern:focus {
+        border-color: #11998e;
+        box-shadow: 0 0 0 4px rgba(17, 153, 142, 0.1);
+    }
+
+    .form-control-modern:disabled {
+        background: #f8f9fa;
+        color: #aaa;
+        border-color: #e8e8e8;
+    }
+
+    .form-label-custom {
+        font-weight: 600;
+        color: #1a1a2e;
+        margin-bottom: 8px;
+        font-size: 0.9rem;
+    }
+
+    .form-hint {
+        font-size: 0.8rem;
+        color: #aaa;
+        margin-top: 5px;
+    }
+
+    .btn-update {
+        background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+        border: none;
+        border-radius: 12px;
+        padding: 12px 28px;
+        font-weight: 600;
+        color: white;
+        transition: all 0.3s ease;
+    }
+
+    .btn-update:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(17, 153, 142, 0.3);
+        color: white;
+    }
+
+    .btn-cancel {
+        border-radius: 12px;
+        padding: 12px 24px;
+        font-weight: 500;
+        border: 2px solid #e8e8e8;
+        color: #666;
+        transition: all 0.3s;
+    }
+
+    .btn-cancel:hover {
+        background: #f8f9fa;
+        border-color: #ccc;
+        color: #333;
+    }
+
+    .divider-icon {
+        text-align: center;
+        margin: -8px 0;
+        position: relative;
+        z-index: 1;
+    }
+
+    .divider-icon span {
+        background: white;
+        padding: 0 16px;
+        color: #aaa;
+        font-size: 0.85rem;
+    }
+</style>
+
+<!-- Page Header -->
+<div class="page-header">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-md-8">
+                <h1><i class="bi bi-person-circle me-3"></i>My Profile</h1>
+                <p class="mb-0">Update your personal information and password.</p>
             </div>
-        }
-        
-        <form asp-action="Profile" method="post">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <input type="hidden" asp-for="AccountID" />
-            
-            <div class="form-group mb-3">
-                <label asp-for="AccountName" class="form-label"></label>
-                <input asp-for="AccountName" class="form-control" />
-                <span asp-validation-for="AccountName" class="text-danger"></span>
+            <div class="col-md-4 text-md-end text-center mt-3 mt-md-0">
+                <a asp-action="Dashboard" class="btn btn-light btn-sm px-3">
+                    <i class="bi bi-arrow-left me-1"></i>Back to Dashboard
+                </a>
             </div>
-            
-            <div class="form-group mb-3">
-                <label asp-for="AccountEmail" class="form-label"></label>
-                <input asp-for="AccountEmail" class="form-control" readonly />
-                <small class="form-text text-muted">Email cannot be changed.</small>
+        </div>
+    </div>
+</div>
+
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show mb-4" role="alert" style="border-radius: 12px;">
+        <i class="bi bi-check-circle me-2"></i>@TempData["SuccessMessage"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+}
+
+<div class="row g-4">
+    <!-- Profile Info Card -->
+    <div class="col-lg-4">
+        <div class="profile-card">
+            <div class="profile-header">
+                <div class="profile-avatar">
+                    <i class="bi bi-person-fill"></i>
+                </div>
+                <div class="profile-name">@Model.AccountName</div>
+                <div class="profile-role">@roleLabel</div>
             </div>
-            
-            <div class="form-group mb-3">
-                <label asp-for="AccountPassword" class="form-label">New Password</label>
-                <input asp-for="AccountPassword" class="form-control" type="password" placeholder="Enter new password or leave blank to keep current" />
-                <span asp-validation-for="AccountPassword" class="text-danger"></span>
+            <ul class="profile-info-list">
+                <li>
+                    <div class="info-icon" style="background: rgba(102, 126, 234, 0.12); color: #667eea;">
+                        <i class="bi bi-envelope"></i>
+                    </div>
+                    <div>
+                        <div class="info-label">Email Address</div>
+                        <div class="info-value">@Model.AccountEmail</div>
+                    </div>
+                </li>
+                <li>
+                    <div class="info-icon" style="background: rgba(240, 147, 251, 0.12); color: #f093fb;">
+                        <i class="bi bi-shield-check"></i>
+                    </div>
+                    <div>
+                        <div class="info-label">Account Role</div>
+                        <div class="info-value">@roleLabel</div>
+                    </div>
+                </li>
+                <li>
+                    <div class="info-icon" style="background: rgba(67, 233, 123, 0.12); color: #38ef7d;">
+                        <i class="bi bi-key"></i>
+                    </div>
+                    <div>
+                        <div class="info-label">Password Status</div>
+                        <div class="info-value">
+                            <span class="text-success"><i class="bi bi-check-circle me-1"></i>Set</span>
+                        </div>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Edit Form Card -->
+    <div class="col-lg-8">
+        <div class="edit-card">
+            <div class="card-header-custom">
+                <i class="bi bi-pencil-square"></i>Edit Profile Information
             </div>
-            
-            <div class="form-group mb-3">
-                <label class="form-label">Current Role</label>
-                <input type="text" class="form-control" readonly value="@(Model.AccountRole == 0 ? "Admin" : Model.AccountRole == 1 ? "Staff" : "Lecturer")" />
-                <small class="form-text text-muted">Role cannot be changed.</small>
+            <div class="card-body-custom">
+                <form asp-action="Profile" method="post">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" asp-for="AccountID" />
+
+                    <div class="row g-4">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label-custom">Full Name <span class="text-danger">*</span></label>
+                                <input asp-for="AccountName" class="form-control form-control-modern"
+                                       placeholder="Enter your name" />
+                                <span asp-validation-for="AccountName" class="text-danger small"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label-custom">Email Address</label>
+                                <input asp-for="AccountEmail" class="form-control form-control-modern" disabled />
+                                <div class="form-hint"><i class="bi bi-lock me-1"></i>Email cannot be changed</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <hr class="my-4" style="border-color: #f0f0f0;" />
+
+                    <div class="mb-3">
+                        <label class="form-label-custom">
+                            <i class="bi bi-key me-1"></i>New Password
+                        </label>
+                        <input asp-for="AccountPassword" class="form-control form-control-modern"
+                               type="password" placeholder="Enter new password or leave blank to keep current" />
+                        <span asp-validation-for="AccountPassword" class="text-danger small"></span>
+                        <div class="form-hint">
+                            <i class="bi bi-info-circle me-1"></i>Leave blank if you don't want to change your password
+                        </div>
+                    </div>
+
+                    <hr class="my-4" style="border-color: #f0f0f0;" />
+
+                    <div class="d-flex gap-3 align-items-center">
+                        <button type="submit" class="btn btn-update">
+                            <i class="bi bi-check-lg me-2"></i>Save Changes
+                        </button>
+                        <a asp-action="Dashboard" class="btn btn-cancel">
+                            <i class="bi bi-x-lg me-2"></i>Cancel
+                        </a>
+                    </div>
+                </form>
             </div>
-            
-            <div class="form-group">
-                <button type="submit" class="btn btn-primary">Update Profile</button>
-                <a asp-action="Dashboard" class="btn btn-secondary">Back to Dashboard</a>
-            </div>
-        </form>
+        </div>
     </div>
 </div>
 

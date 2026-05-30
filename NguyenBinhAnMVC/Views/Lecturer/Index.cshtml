@@ -1,91 +1,411 @@
 @model IEnumerable<NguyenBinhAn_A01_Data.Models.NewsArticle>
 @{
     ViewData["Title"] = "News Articles";
+    var categories = ViewBag.Categories as IEnumerable<NguyenBinhAn_A01_Data.Models.Category>
+                     ?? Enumerable.Empty<NguyenBinhAn_A01_Data.Models.Category>();
 }
 
-<div class="row">
-    <div class="col-md-12">
-        <div class="d-flex justify-content-between align-items-center mb-3">
-            <h1>News Articles</h1>
-            <div>
-                <span class="text-muted">Welcome, @ViewBag.UserName</span>
+<style>
+    .page-header {
+        background: linear-gradient(135deg, #4a00e0 0%, #8e2de2 100%);
+        color: white;
+        padding: 40px 0;
+        margin-bottom: 40px;
+        border-radius: 0 0 30px 30px;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .page-header::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        right: -10%;
+        width: 400px;
+        height: 400px;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 50%;
+    }
+
+    .page-header h1 {
+        font-weight: 700;
+        position: relative;
+        z-index: 1;
+    }
+
+    .page-header p {
+        opacity: 0.9;
+        position: relative;
+        z-index: 1;
+    }
+
+    .search-bar {
+        position: relative;
+        z-index: 1;
+    }
+
+    .search-bar .form-control {
+        border-radius: 12px;
+        padding: 12px 20px 12px 44px;
+        border: none;
+        background: rgba(255, 255, 255, 0.2);
+        color: white;
+        font-size: 0.95rem;
+        backdrop-filter: blur(10px);
+    }
+
+    .search-bar .form-control::placeholder {
+        color: rgba(255, 255, 255, 0.7);
+    }
+
+    .search-bar .form-control:focus {
+        background: rgba(255, 255, 255, 0.3);
+        color: white;
+        box-shadow: none;
+        outline: none;
+    }
+
+    .search-bar .search-icon {
+        position: absolute;
+        left: 14px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: rgba(255, 255, 255, 0.7);
+    }
+
+    .sidebar-card {
+        background: white;
+        border-radius: 16px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+        overflow: hidden;
+        border: none;
+    }
+
+    .sidebar-card .card-header-custom {
+        background: linear-gradient(135deg, #4a00e0 0%, #8e2de2 100%);
+        color: white;
+        padding: 16px 20px;
+        font-weight: 600;
+        font-size: 0.95rem;
+        border: none;
+    }
+
+    .sidebar-card .card-header-custom i {
+        margin-right: 8px;
+    }
+
+    .category-item {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 10px 20px;
+        color: #555;
+        text-decoration: none;
+        font-size: 0.9rem;
+        transition: all 0.2s;
+        border-bottom: 1px solid #f5f5f5;
+    }
+
+    .category-item:hover {
+        background: rgba(74, 0, 224, 0.05);
+        color: #4a00e0;
+        padding-left: 24px;
+    }
+
+    .category-item .cat-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: #ddd;
+        flex-shrink: 0;
+    }
+
+    .category-item:hover .cat-dot {
+        background: #4a00e0;
+    }
+
+    .category-item .cat-count {
+        margin-left: auto;
+        background: #f0f0f0;
+        color: #888;
+        font-size: 0.75rem;
+        padding: 2px 8px;
+        border-radius: 10px;
+    }
+
+    .news-card {
+        background: white;
+        border-radius: 16px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+        padding: 24px;
+        margin-bottom: 16px;
+        transition: all 0.3s ease;
+        border: 1px solid transparent;
+        display: block;
+        text-decoration: none;
+        color: inherit;
+    }
+
+    .news-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+        border-color: rgba(74, 0, 224, 0.15);
+        color: inherit;
+    }
+
+    .news-card .card-category {
+        display: inline-block;
+        padding: 4px 12px;
+        border-radius: 20px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        margin-bottom: 12px;
+        background: rgba(74, 0, 224, 0.08);
+        color: #4a00e0;
+    }
+
+    .news-card .card-title {
+        font-size: 1.1rem;
+        font-weight: 700;
+        color: #1a1a2e;
+        margin-bottom: 8px;
+        line-height: 1.4;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+
+    .news-card:hover .card-title {
+        color: #4a00e0;
+    }
+
+    .news-card .card-headline {
+        font-size: 0.88rem;
+        color: #777;
+        margin-bottom: 16px;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        line-height: 1.5;
+    }
+
+    .news-card .card-meta {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        font-size: 0.8rem;
+        color: #aaa;
+    }
+
+    .news-card .card-meta i {
+        margin-right: 4px;
+    }
+
+    .news-card .card-meta .read-more {
+        margin-left: auto;
+        color: #4a00e0;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        opacity: 0;
+        transition: opacity 0.2s;
+    }
+
+    .news-card:hover .card-meta .read-more {
+        opacity: 1;
+    }
+
+    .breadcrumb-custom {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 0.85rem;
+        margin-bottom: 16px;
+    }
+
+    .breadcrumb-custom a {
+        color: #aaa;
+        text-decoration: none;
+    }
+
+    .breadcrumb-custom a:hover {
+        color: #4a00e0;
+    }
+
+    .breadcrumb-custom .separator {
+        color: #ddd;
+    }
+
+    .no-results {
+        text-align: center;
+        padding: 60px 20px;
+        color: #aaa;
+    }
+
+    .no-results i {
+        font-size: 48px;
+        opacity: 0.3;
+        display: block;
+        margin-bottom: 16px;
+    }
+
+    .badge-filter {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 16px;
+        border-radius: 12px;
+        background: rgba(74, 0, 224, 0.08);
+        color: #4a00e0;
+        font-size: 0.85rem;
+        font-weight: 600;
+        margin-bottom: 24px;
+    }
+
+    .badge-filter .close-btn {
+        background: none;
+        border: none;
+        color: #4a00e0;
+        cursor: pointer;
+        padding: 0;
+        font-size: 1.1rem;
+        line-height: 1;
+    }
+</style>
+
+<!-- Page Header -->
+<div class="page-header">
+    <div class="container">
+        <div class="row align-items-center mb-4">
+            <div class="col-md-7">
+                <h1><i class="bi bi-mortarboard me-3"></i>News Articles</h1>
+                <p class="mb-0">Browse latest news and articles across all categories.</p>
+            </div>
+            <div class="col-md-5">
+                <form asp-action="Search" method="get" class="search-bar">
+                    <i class="bi bi-search search-icon"></i>
+                    <input type="text" name="searchTerm" class="form-control"
+                           placeholder="Search articles..."
+                           value="@ViewBag.SearchTerm" />
+                </form>
             </div>
         </div>
-        
-        @if (!string.IsNullOrEmpty(ViewBag.SearchTerm))
-        {
-            <p class="text-muted">Search results for: "@ViewBag.SearchTerm"</p>
-        }
-        
-        @if (ViewBag.Category != null)
-        {
-            <p class="text-muted">Category: @ViewBag.Category.CategoryName</p>
-        }
+    </div>
+</div>
 
-        @if (!Model.Any())
-        {
-            <div class="alert alert-info">
-                No news articles found.
-            </div>
-        }
-        else
-        {
-            @foreach (var news in Model)
+<!-- Filter Badge -->
+@if (!string.IsNullOrEmpty(ViewBag.SearchTerm as string))
+{
+    <div class="container">
+        <div class="badge-filter">
+            <i class="bi bi-search"></i>
+            Results for: "@ViewBag.SearchTerm"
+            <a asp-action="Index" class="close-btn" title="Clear search">&times;</a>
+        </div>
+    </div>
+}
+
+<div class="container">
+    <div class="row g-4">
+        <!-- Main Content -->
+        <div class="col-lg-8">
+            @if (!string.IsNullOrEmpty(ViewBag.SearchTerm as string) && !Model.Any())
             {
-                <div class="card mb-3">
-                    <div class="card-body">
-                        <h5 class="card-title">
-                            <a asp-action="Details" asp-route-id="@news.NewsArticleID" class="text-decoration-none">
-                                @news.NewsTitle
-                            </a>
-                        </h5>
-                        @if (!string.IsNullOrEmpty(news.Headline))
-                        {
-                            <p class="card-text text-muted">@news.Headline</p>
-                        }
-                        <p class="card-text">
-                            <small class="text-muted">
-                                @(news.CreatedDate?.ToString("MMM dd, yyyy") ?? "N/A") | 
-                                Category ID: @news.CategoryID
-                            </small>
-                        </p>
-                        <a asp-action="Details" asp-route-id="@news.NewsArticleID" class="btn btn-primary btn-sm">Read More</a>
-                    </div>
+                <div class="no-results">
+                    <i class="bi bi-search"></i>
+                    <h5>No results found</h5>
+                    <p>Try a different keyword or <a asp-action="Index">browse all articles</a>.</p>
                 </div>
             }
-        }
-    </div>
-    
-    <div class="col-md-3">
-        <div class="card">
-            <div class="card-header">
-                <h6>Categories</h6>
-            </div>
-            <div class="card-body">
-                @if (ViewBag.Categories != null)
+            else if (!Model.Any())
+            {
+                <div class="no-results">
+                    <i class="bi bi-newspaper"></i>
+                    <h5>No articles yet</h5>
+                    <p>Check back later for new content.</p>
+                </div>
+            }
+            else
+            {
+                @if (ViewBag.Category != null)
                 {
-                    @foreach (var category in ViewBag.Categories)
+                    <div class="breadcrumb-custom">
+                        <a asp-action="Index"><i class="bi bi-house"></i></a>
+                        <span class="separator">/</span>
+                        <span>@ViewBag.Category.CategoryName</span>
+                    </div>
+                }
+
+                foreach (var news in Model)
+                {
+                    <a asp-action="Details" asp-route-id="@news.NewsArticleID" class="news-card">
+                        <div>
+                            @if (!string.IsNullOrEmpty(ViewBag.Categories as string))
+                            {
+                                var cat = categories.FirstOrDefault(c => c.CategoryID == news.CategoryID);
+                                @if (cat != null)
+                                {
+                                    <span class="card-category">
+                                        <i class="bi bi-folder me-1"></i>@cat.CategoryName
+                                    </span>
+                                }
+                            }
+                            <div class="card-title">@news.NewsTitle</div>
+                            @if (!string.IsNullOrEmpty(news.Headline))
+                            {
+                                <div class="card-headline">@news.Headline</div>
+                            }
+                            <div class="card-meta">
+                                <span><i class="bi bi-calendar3"></i>@(news.CreatedDate?.ToString("MMM dd, yyyy") ?? "N/A")</span>
+                                <span class="read-more">Read More <i class="bi bi-arrow-right"></i></span>
+                            </div>
+                        </div>
+                    </a>
+                }
+            }
+        </div>
+
+        <!-- Sidebar -->
+        <div class="col-lg-4">
+            <!-- Categories -->
+            <div class="sidebar-card mb-4">
+                <div class="card-header-custom">
+                    <i class="bi bi-folder"></i>Categories
+                </div>
+                <div class="p-0">
+                    <a asp-action="Index" class="category-item @(ViewBag.Category == null ? "active" : "")">
+                        <span class="cat-dot"></span>
+                        All Articles
+                    </a>
+                    @foreach (var category in categories)
                     {
-                        <a asp-action="Category" asp-route-id="@category.CategoryID" class="d-block text-decoration-none mb-2">
+                        <a asp-action="Category" asp-route-id="@category.CategoryID"
+                           class="category-item @(ViewBag.Category?.CategoryID == category.CategoryID ? "active" : "")">
+                            <span class="cat-dot"></span>
                             @category.CategoryName
                         </a>
                     }
-                }
+                </div>
             </div>
-        </div>
-        
-        <div class="card mt-3">
-            <div class="card-header">
-                <h6>Search</h6>
-            </div>
-            <div class="card-body">
-                <form asp-action="Search" method="get">
-                    <div class="input-group">
-                        <input type="text" name="searchTerm" class="form-control" placeholder="Search news..." 
-                               value="@ViewBag.SearchTerm" />
-                        <button type="submit" class="btn btn-outline-secondary">Search</button>
+
+            <!-- Stats -->
+            <div class="sidebar-card">
+                <div class="card-header-custom">
+                    <i class="bi bi-bar-chart"></i>Quick Stats
+                </div>
+                <div class="card-body">
+                    <div class="d-flex justify-content-between mb-3">
+                        <span class="text-muted" style="font-size:0.88rem;">Total Articles</span>
+                        <strong style="color:#4a00e0;">@Model.Count()</strong>
                     </div>
-                </form>
+                    <div class="d-flex justify-content-between">
+                        <span class="text-muted" style="font-size:0.88rem;">Categories</span>
+                        <strong style="color:#4a00e0;">@categories.Count()</strong>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
