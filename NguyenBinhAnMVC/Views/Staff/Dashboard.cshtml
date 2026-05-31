@@ -1,0 +1,314 @@
+@{
+    ViewData["Title"] = "Staff Dashboard";
+}
+
+<style>
+    .dashboard-header {
+        background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+        color: white;
+        padding: 40px 0;
+        margin-bottom: 32px;
+        border-radius: 0 0 30px 30px;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .dashboard-header::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        left: -10%;
+        width: 400px;
+        height: 400px;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 50%;
+    }
+
+    .dashboard-header h1 {
+        font-weight: 700;
+        position: relative;
+        z-index: 1;
+    }
+
+    .dashboard-header p {
+        opacity: 0.9;
+        position: relative;
+        z-index: 1;
+    }
+
+    .stat-card {
+        background: white;
+        border-radius: 16px;
+        padding: 20px 24px;
+        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .stat-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+    }
+
+    .stat-card .stat-icon {
+        width: 48px;
+        height: 48px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 22px;
+        color: white;
+        flex-shrink: 0;
+    }
+
+    .stat-card .stat-body {
+        min-width: 0;
+    }
+
+    .stat-card .stat-number {
+        font-size: 1.6rem;
+        font-weight: 700;
+        color: #1a1a2e;
+        line-height: 1.2;
+    }
+
+    .stat-card .stat-label {
+        color: #999;
+        font-size: 0.82rem;
+        margin-top: 2px;
+    }
+
+    .section-label {
+        font-size: 0.75rem;
+        font-weight: 600;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: #aaa;
+        margin-bottom: 12px;
+        padding-left: 4px;
+    }
+
+    .chart-card {
+        background: white;
+        border-radius: 16px;
+        padding: 24px;
+        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+    }
+
+    .chart-card .chart-title {
+        font-weight: 600;
+        color: #1a1a2e;
+        margin-bottom: 20px;
+        font-size: 0.95rem;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+</style>
+
+<!-- Dashboard Header -->
+<div class="dashboard-header">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-md-8">
+                <h1><i class="bi bi-person-badge me-3"></i>Staff Dashboard</h1>
+                <p class="mb-0">Manage your news content and categories.</p>
+            </div>
+            <div class="col-md-4 text-md-end text-center mt-3 mt-md-0">
+                <span class="badge bg-light text-dark fs-6 px-3 py-2">
+                    <i class="bi bi-calendar3 me-1"></i>@DateTime.Now.ToString("MMMM dd, yyyy")
+                </span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Stats Row -->
+<div class="section-label">Your Statistics</div>
+<div class="row g-3 mb-5">
+    <div class="col-6 col-lg-3">
+        <div class="stat-card">
+            <div class="stat-icon" style="background: linear-gradient(135deg, #667eea, #764ba2);">
+                <i class="bi bi-folder"></i>
+            </div>
+            <div class="stat-body">
+                <div class="stat-number" data-stat="categoryCount">@ViewBag.CategoryCount</div>
+                <div class="stat-label">Categories</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-6 col-lg-3">
+        <div class="stat-card">
+            <div class="stat-icon" style="background: linear-gradient(135deg, #f093fb, #f5576c);">
+                <i class="bi bi-newspaper"></i>
+            </div>
+            <div class="stat-body">
+                <div class="stat-number" data-stat="newsCount">@ViewBag.NewsCount</div>
+                <div class="stat-label">News Articles</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-6 col-lg-3">
+        <div class="stat-card">
+            <div class="stat-icon" style="background: linear-gradient(135deg, #43e97b, #38f9d7);">
+                <i class="bi bi-check-circle"></i>
+            </div>
+            <div class="stat-body">
+                <div class="stat-number" data-stat="activeNewsCount">@ViewBag.ActiveNewsCount</div>
+                <div class="stat-label">Active Articles</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-6 col-lg-3">
+        <div class="stat-card">
+            <div class="stat-icon" style="background: linear-gradient(135deg, #4facfe, #00f2fe);">
+                <i class="bi bi-clock-history"></i>
+            </div>
+            <div class="stat-body">
+                <div class="stat-number" data-stat="userNewsCount">@ViewBag.UserNewsCount</div>
+                <div class="stat-label">Your Articles</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Charts Row -->
+<div class="section-label">Analytics</div>
+<div class="row g-3">
+    <div class="col-lg-6">
+        <div class="chart-card">
+            <div class="chart-title">
+                <i class="bi bi-pie-chart" style="color:#11998e;"></i>
+                News by Category
+            </div>
+            <canvas id="newsByCategoryChart" height="200"></canvas>
+        </div>
+    </div>
+    <div class="col-lg-6">
+        <div class="chart-card">
+            <div class="chart-title">
+                <i class="bi bi-bar-chart" style="color:#11998e;"></i>
+                Active vs Inactive Articles
+            </div>
+            <canvas id="activeVsInactiveChart" height="200"></canvas>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        let newsByCategoryChart, activeVsInactiveChart;
+
+        const categoryColors = [
+            '#667eea', '#f5576c', '#38f9d7', '#ff8e53',
+            '#764ba2', '#4facfe', '#f093fb', '#00f2fe',
+            '#43e97b', '#ff6b6b', '#38ef7d', '#11998e'
+        ];
+
+        async function fetchChartData() {
+            try {
+                const response = await fetch('/Staff/GetChartData');
+                if (!response.ok) return;
+                const data = await response.json();
+
+                const catLabels = Object.keys(data.newsByCategory);
+                const catValues = Object.values(data.newsByCategory);
+
+                if (newsByCategoryChart) {
+                    newsByCategoryChart.data.labels = catLabels;
+                    newsByCategoryChart.data.datasets[0].data = catValues;
+                    newsByCategoryChart.update();
+                } else {
+                    const ctx = document.getElementById('newsByCategoryChart').getContext('2d');
+                    newsByCategoryChart = new Chart(ctx, {
+                        type: 'doughnut',
+                        data: {
+                            labels: catLabels,
+                            datasets: [{
+                                data: catValues,
+                                backgroundColor: categoryColors.slice(0, catLabels.length),
+                                borderWidth: 0
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            cutout: '60%',
+                            plugins: { legend: { position: 'bottom', labels: { padding: 15, usePointStyle: true, font: { size: 12 } } } }
+                        }
+                    });
+                }
+
+                const statusLabels = Object.keys(data.activeVsInactive);
+                const statusValues = Object.values(data.activeVsInactive);
+
+                if (activeVsInactiveChart) {
+                    activeVsInactiveChart.data.labels = statusLabels;
+                    activeVsInactiveChart.data.datasets[0].data = statusValues;
+                    activeVsInactiveChart.update();
+                } else {
+                    const ctx2 = document.getElementById('activeVsInactiveChart').getContext('2d');
+                    activeVsInactiveChart = new Chart(ctx2, {
+                        type: 'doughnut',
+                        data: {
+                            labels: statusLabels,
+                            datasets: [{
+                                data: statusValues,
+                                backgroundColor: ['rgba(67, 233, 123, 0.8)', 'rgba(245, 87, 108, 0.8)'],
+                                borderWidth: 0
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            cutout: '60%',
+                            plugins: { legend: { position: 'bottom', labels: { padding: 15, usePointStyle: true, font: { size: 12 } } } }
+                        }
+                    });
+                }
+            } catch (e) {
+                console.error('Failed to fetch chart data:', e);
+            }
+        }
+
+        async function fetchStats() {
+            try {
+                const response = await fetch('/Staff/GetStats');
+                if (!response.ok) return;
+                const data = await response.json();
+
+                const statMap = {
+                    categoryCount: data.categoryCount,
+                    newsCount: data.newsCount,
+                    activeNewsCount: data.activeNewsCount,
+                    userNewsCount: data.userNewsCount
+                };
+
+                for (const [key, value] of Object.entries(statMap)) {
+                    const el = document.querySelector(`[data-stat="${key}"]`);
+                    if (el && el.textContent.trim() !== String(value)) {
+                        el.textContent = value;
+                        el.style.animation = 'none';
+                        el.offsetHeight;
+                        el.style.animation = 'popIn 0.3s ease';
+                    }
+                }
+            } catch (e) {
+                console.error('Failed to fetch stats:', e);
+            }
+        }
+
+        fetchChartData();
+        fetchStats();
+        setInterval(fetchChartData, 10000);
+        setInterval(fetchStats, 5000);
+    </script>
+    <style>
+        @@keyframes popIn {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.15); color: #11998e; }
+            100% { transform: scale(1); }
+        }
+    </style>
+}

@@ -1,0 +1,315 @@
+@{
+    ViewData["Title"] = "Admin Dashboard";
+}
+
+<style>
+    .dashboard-header {
+        background: linear-gradient(135deg, #ff6b6b 0%, #ff8e53 100%);
+        color: white;
+        padding: 40px 0;
+        margin-bottom: 32px;
+        border-radius: 0 0 30px 30px;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .dashboard-header::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        right: -10%;
+        width: 400px;
+        height: 400px;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 50%;
+    }
+
+    .dashboard-header h1 {
+        font-weight: 700;
+        position: relative;
+        z-index: 1;
+    }
+
+    .dashboard-header p {
+        opacity: 0.9;
+        position: relative;
+        z-index: 1;
+    }
+
+    .stat-card {
+        background: white;
+        border-radius: 16px;
+        padding: 20px 24px;
+        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .stat-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+    }
+
+    .stat-card .stat-icon {
+        width: 48px;
+        height: 48px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 22px;
+        color: white;
+        flex-shrink: 0;
+    }
+
+    .stat-card .stat-body {
+        min-width: 0;
+    }
+
+    .stat-card .stat-number {
+        font-size: 1.6rem;
+        font-weight: 700;
+        color: #1a1a2e;
+        line-height: 1.2;
+    }
+
+    .stat-card .stat-label {
+        color: #999;
+        font-size: 0.82rem;
+        margin-top: 2px;
+    }
+
+    .section-label {
+        font-size: 0.75rem;
+        font-weight: 600;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: #aaa;
+        margin-bottom: 12px;
+        padding-left: 4px;
+    }
+
+    .chart-card {
+        background: white;
+        border-radius: 16px;
+        padding: 24px;
+        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+    }
+
+    .chart-card .chart-title {
+        font-weight: 600;
+        color: #1a1a2e;
+        margin-bottom: 20px;
+        font-size: 0.95rem;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+</style>
+
+<!-- Dashboard Header -->
+<div class="dashboard-header">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-md-8">
+                <h1><i class="bi bi-shield-lock me-3"></i>Admin Dashboard</h1>
+                <p class="mb-0">System overview — manage accounts, view reports and statistics.</p>
+            </div>
+            <div class="col-md-4 text-md-end text-center mt-3 mt-md-0">
+                <span class="badge bg-light text-dark fs-6 px-3 py-2">
+                    <i class="bi bi-calendar3 me-1"></i>@DateTime.Now.ToString("MMMM dd, yyyy")
+                </span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Stats Row -->
+<div class="section-label">System Overview</div>
+<div class="row g-3 mb-5">
+    <div class="col-6 col-lg-3">
+        <div class="stat-card">
+            <div class="stat-icon" style="background: linear-gradient(135deg, #667eea, #764ba2);">
+                <i class="bi bi-people"></i>
+            </div>
+            <div class="stat-body">
+                <div class="stat-number" data-stat="totalAccounts">@ViewBag.TotalAccounts</div>
+                <div class="stat-label">Total Accounts</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-6 col-lg-3">
+        <div class="stat-card">
+            <div class="stat-icon" style="background: linear-gradient(135deg, #f093fb, #f5576c);">
+                <i class="bi bi-person-badge"></i>
+            </div>
+            <div class="stat-body">
+                <div class="stat-number" data-stat="staffCount">@ViewBag.StaffCount</div>
+                <div class="stat-label">Staff Members</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-6 col-lg-3">
+        <div class="stat-card">
+            <div class="stat-icon" style="background: linear-gradient(135deg, #43e97b, #38f9d7);">
+                <i class="bi bi-mortarboard"></i>
+            </div>
+            <div class="stat-body">
+                <div class="stat-number" data-stat="lecturerCount">@ViewBag.LecturerCount</div>
+                <div class="stat-label">Lecturers</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-6 col-lg-3">
+        <div class="stat-card">
+            <div class="stat-icon" style="background: linear-gradient(135deg, #4facfe, #00f2fe);">
+                <i class="bi bi-newspaper"></i>
+            </div>
+            <div class="stat-body">
+                <div class="stat-number" data-stat="totalNews">@ViewBag.TotalNews</div>
+                <div class="stat-label">Total Articles</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Charts Row -->
+<div class="section-label">Analytics</div>
+<div class="row g-3">
+    <div class="col-lg-4">
+        <div class="chart-card">
+            <div class="chart-title">
+                <i class="bi bi-pie-chart" style="color:#667eea;"></i>
+                Accounts by Role
+            </div>
+            <canvas id="accountsByRoleChart" height="200"></canvas>
+        </div>
+    </div>
+    <div class="col-lg-8">
+        <div class="chart-card">
+            <div class="chart-title">
+                <i class="bi bi-bar-chart" style="color:#667eea;"></i>
+                News Articles — Last 6 Months
+            </div>
+            <canvas id="newsPerMonthChart" height="100"></canvas>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        let accountsByRoleChart, newsPerMonthChart;
+
+        async function fetchChartData() {
+            try {
+                const response = await fetch('/Admin/GetChartData');
+                if (!response.ok) return;
+                const data = await response.json();
+
+                const roleLabels = Object.keys(data.accountsByRole);
+                const roleValues = Object.values(data.accountsByRole);
+                const roleColors = ['#667eea', '#f5576c', '#38f9d7', '#ff8e53'];
+
+                if (accountsByRoleChart) {
+                    accountsByRoleChart.data.labels = roleLabels;
+                    accountsByRoleChart.data.datasets[0].data = roleValues;
+                    accountsByRoleChart.data.datasets[0].backgroundColor = roleColors.slice(0, roleLabels.length);
+                    accountsByRoleChart.update();
+                } else {
+                    const ctx = document.getElementById('accountsByRoleChart').getContext('2d');
+                    accountsByRoleChart = new Chart(ctx, {
+                        type: 'doughnut',
+                        data: {
+                            labels: roleLabels,
+                            datasets: [{
+                                data: roleValues,
+                                backgroundColor: roleColors.slice(0, roleLabels.length),
+                                borderWidth: 0
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            cutout: '60%',
+                            plugins: { legend: { position: 'bottom', labels: { padding: 15, usePointStyle: true, font: { size: 12 } } } }
+                        }
+                    });
+                }
+
+                const monthLabels = data.newsPerMonth.map(m => m.label);
+                const monthCounts = data.newsPerMonth.map(m => m.count);
+
+                if (newsPerMonthChart) {
+                    newsPerMonthChart.data.labels = monthLabels;
+                    newsPerMonthChart.data.datasets[0].data = monthCounts;
+                    newsPerMonthChart.update();
+                } else {
+                    const ctx2 = document.getElementById('newsPerMonthChart').getContext('2d');
+                    newsPerMonthChart = new Chart(ctx2, {
+                        type: 'bar',
+                        data: {
+                            labels: monthLabels,
+                            datasets: [{
+                                label: 'Articles',
+                                data: monthCounts,
+                                backgroundColor: 'rgba(102, 126, 234, 0.7)',
+                                borderColor: '#667eea',
+                                borderWidth: 1,
+                                borderRadius: 6
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            plugins: { legend: { display: false } },
+                            scales: {
+                                y: { beginAtZero: true, ticks: { stepSize: 1 } }
+                            }
+                        }
+                    });
+                }
+            } catch (e) {
+                console.error('Failed to fetch chart data:', e);
+            }
+        }
+
+        async function fetchStats() {
+            try {
+                const response = await fetch('/Admin/GetStats');
+                if (!response.ok) return;
+                const data = await response.json();
+
+                const statMap = {
+                    totalAccounts: data.totalAccounts,
+                    staffCount: data.staffCount,
+                    lecturerCount: data.lecturerCount,
+                    totalNews: data.totalNews
+                };
+
+                for (const [key, value] of Object.entries(statMap)) {
+                    const el = document.querySelector(`[data-stat="${key}"]`);
+                    if (el && el.textContent.trim() !== String(value)) {
+                        el.textContent = value;
+                        el.style.animation = 'none';
+                        el.offsetHeight;
+                        el.style.animation = 'popIn 0.3s ease';
+                    }
+                }
+            } catch (e) {
+                console.error('Failed to fetch stats:', e);
+            }
+        }
+
+        fetchChartData();
+        fetchStats();
+        setInterval(fetchChartData, 10000);
+        setInterval(fetchStats, 5000);
+    </script>
+    <style>
+        @@keyframes popIn {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.15); color: #ff6b6b; }
+            100% { transform: scale(1); }
+        }
+    </style>
+}
