@@ -2,34 +2,93 @@
     ViewData["Title"] = "Reports";
 }
 
+<style>
+    .admin-title-section {
+        margin-bottom: 30px;
+    }
+    
+    .admin-title-section h1 {
+        font-weight: 800;
+        font-size: 2.2rem;
+        letter-spacing: -0.5px;
+        color: #0f172a;
+        margin-bottom: 0;
+    }
+
+    .btn-admin-primary {
+        background: var(--theme-admin-gradient);
+        color: white;
+        border: none;
+        font-weight: 700;
+        padding: 12px 24px;
+        border-radius: 12px;
+        transition: var(--transition-base);
+        box-shadow: 0 4px 14px var(--theme-admin-glow);
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .btn-admin-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px var(--theme-admin-glow);
+        color: white;
+    }
+
+    .report-card-title {
+        font-weight: 800;
+        font-size: 1.25rem;
+        color: #0f172a;
+        letter-spacing: -0.25px;
+        margin-bottom: 8px;
+    }
+
+    .report-card-subtitle {
+        color: #64748b;
+        font-weight: 500;
+        font-size: 0.95rem;
+        margin-bottom: 25px;
+    }
+
+    .form-group label {
+        font-weight: 700;
+        color: #334155;
+        font-size: 14px;
+        margin-bottom: 8px;
+    }
+</style>
+
 <div class="row">
     <div class="col-md-12">
-        <h1>Reports</h1>
-        <p class="text-muted">Generate reports and view statistics</p>
+        <div class="admin-title-section">
+            <h1><i class="bi bi-file-earmark-bar-graph-fill me-3 text-danger"></i>Reports Dashboard</h1>
+            <p class="text-muted mt-2 mb-0">Generate reports and view news metrics.</p>
+        </div>
         
-        <div class="card">
-            <div class="card-body">
-                <h5>News Statistics Report</h5>
-                <p>Generate a report of news articles created within a specific date range.</p>
+        <div class="card-modern">
+            <div class="card-body p-4">
+                <h5 class="report-card-title"><i class="bi bi-calendar-range-fill me-2 text-danger"></i>News Statistics Report</h5>
+                <p class="report-card-subtitle">Generate a detailed report of news articles created within a specific date range.</p>
                 
                 <form asp-action="NewsReport" method="post">
-                    <div class="row">
+                    <div class="row g-4 align-items-end">
                         <div class="col-md-5">
                             <div class="form-group">
-                                <label for="startDate" class="form-label">Start Date</label>
-                                <input type="date" id="startDate" name="startDate" class="form-control" required />
+                                <label for="startDate">Start Date</label>
+                                <input type="date" id="startDate" name="startDate" class="form-control-modern w-100" required />
                             </div>
                         </div>
                         <div class="col-md-5">
                             <div class="form-group">
-                                <label for="endDate" class="form-label">End Date</label>
-                                <input type="date" id="endDate" name="endDate" class="form-control" required />
+                                <label for="endDate">End Date</label>
+                                <input type="date" id="endDate" name="endDate" class="form-control-modern w-100" required />
                             </div>
                         </div>
                         <div class="col-md-2">
                             <div class="form-group">
-                                <label class="form-label">&nbsp;</label><br />
-                                <button type="submit" class="btn btn-primary">Generate Report</button>
+                                <button type="submit" class="btn-admin-primary w-100 justify-content-center">
+                                    <i class="bi bi-play-circle-fill"></i>Generate
+                                </button>
                             </div>
                         </div>
                     </div>

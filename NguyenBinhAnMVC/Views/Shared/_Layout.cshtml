@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -7,181 +7,120 @@
     <script type="importmap"></script>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/NguyenBinhAnMVC.styles.css" asp-append-version="true" />
     <style>
         * {
-            font-family: 'Inter', sans-serif;
-        }
-        
-        html, body {
-            height: 100%;
+            font-family: 'Plus Jakarta Sans', sans-serif;
         }
         
         body {
-            background: #f8f9fa;
+            background-color: var(--bg-global);
             display: flex;
             flex-direction: column;
+            min-height: 100vh;
         }
-        
-        .main-content {
-            flex: 1;
-        }
-        
-        /* Modern Header */
-        .navbar-modern {
-            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
-            padding: 0;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
-        }
-        
-        .navbar-modern .navbar-brand {
-            color: white;
-            font-weight: 700;
-            font-size: 1.3rem;
-            padding: 18px 20px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            transition: all 0.3s;
-        }
-        
-        .navbar-modern .navbar-brand:hover {
-            color: #667eea;
-        }
-        
-        .navbar-modern .navbar-brand i {
-            font-size: 1.5rem;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-        
-        .navbar-modern .navbar-toggler {
-            border-color: rgba(255, 255, 255, 0.3);
-            margin-right: 15px;
-        }
-        
-        .navbar-modern .navbar-toggler-icon {
-            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba%28255, 255, 255, 0.8%29' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
-        }
-        
+
+        /* Nav link custom underlines */
         .navbar-modern .nav-link {
-            color: rgba(255, 255, 255, 0.85);
-            padding: 18px 15px;
-            font-weight: 500;
-            transition: all 0.3s;
             position: relative;
+            font-weight: 600 !important;
+            font-size: 0.95rem;
+            color: #475569 !important;
+            padding: 0.6rem 1.1rem !important;
         }
         
         .navbar-modern .nav-link:hover,
-        .navbar-modern .nav-link:focus {
-            color: white;
+        .navbar-modern .nav-item.active .nav-link {
+            color: #0f172a !important;
         }
-        
+
         .navbar-modern .nav-link::after {
             content: '';
             position: absolute;
-            bottom: 0;
+            bottom: 0px;
             left: 50%;
             transform: translateX(-50%);
             width: 0;
             height: 3px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            transition: width 0.3s;
+            background: var(--theme-public-gradient);
+            transition: var(--transition-base);
             border-radius: 3px 3px 0 0;
+        }
+
+        .theme-admin .navbar-modern .nav-link::after {
+            background: var(--theme-admin-gradient);
+        }
+
+        .theme-staff .navbar-modern .nav-link::after {
+            background: var(--theme-staff-gradient);
         }
         
         .navbar-modern .nav-link:hover::after {
-            width: 80%;
+            width: 60%;
         }
-        
-        .navbar-modern .nav-item.dropdown .nav-link.dropdown-toggle::after {
-            display: none;
-        }
-        
-        .navbar-modern .dropdown-menu {
-            border: none;
-            border-radius: 12px;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
-            padding: 10px;
-            margin-top: 0;
-            background: white;
-        }
-        
-        .navbar-modern .dropdown-menu .dropdown-item {
-            border-radius: 8px;
-            padding: 10px 15px;
-            color: #333;
-            font-weight: 500;
-            transition: all 0.3s;
-        }
-        
-        .navbar-modern .dropdown-menu .dropdown-item:hover {
-            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
-            color: #667eea;
-        }
-        
-        .navbar-modern .dropdown-menu .dropdown-item i {
-            margin-right: 10px;
-            color: #667eea;
-        }
-        
-        .navbar-modern .nav-item .nav-link.text-dark {
-            color: rgba(255, 255, 255, 0.85) !important;
-        }
-        
-        .navbar-modern .nav-item .nav-link.text-dark:hover {
-            color: white !important;
-        }
-        
+
         .user-badge {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            padding: 6px 15px;
+            background: var(--theme-public-gradient);
+            padding: 6px 16px;
             border-radius: 20px;
             color: white;
-            font-weight: 500;
+            font-weight: 600;
             display: flex;
             align-items: center;
             gap: 8px;
-            margin: 10px 0;
+            box-shadow: 0 4px 12px var(--theme-public-glow);
         }
-        
-        .user-badge i {
-            font-size: 1.2rem;
+
+        .theme-admin .user-badge {
+            background: var(--theme-admin-gradient);
+            box-shadow: 0 4px 12px var(--theme-admin-glow);
         }
-        
+
+        .theme-staff .user-badge {
+            background: var(--theme-staff-gradient);
+            box-shadow: 0 4px 12px var(--theme-staff-glow);
+        }
+
         /* Modern Footer */
         .footer-modern {
-            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
-            color: rgba(255, 255, 255, 0.8);
-            padding: 50px 0 0;
+            background: linear-gradient(180deg, #0f172a 0%, #020617 100%);
+            color: #94a3b8;
+            padding: 70px 0 0;
             margin-top: auto;
             width: 100%;
-        }
-        
-        .footer-modern .container {
-            max-width: 1200px;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
         }
         
         .footer-modern .footer-brand {
             color: white;
-            font-weight: 700;
-            font-size: 1.3rem;
+            font-weight: 800;
+            font-size: 1.4rem;
             display: flex;
             align-items: center;
             gap: 10px;
-            margin-bottom: 15px;
+            margin-bottom: 20px;
         }
         
         .footer-modern .footer-brand i {
-            font-size: 1.5rem;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-size: 1.6rem;
+            background: var(--theme-public-gradient);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
+        }
+
+        .theme-admin .footer-modern .footer-brand i {
+            background: var(--theme-admin-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .theme-staff .footer-modern .footer-brand i {
+            background: var(--theme-staff-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
         
         .footer-modern .footer-links {
@@ -191,106 +130,137 @@
         }
         
         .footer-modern .footer-links li {
-            margin-bottom: 10px;
+            margin-bottom: 12px;
         }
         
         .footer-modern .footer-links a {
-            color: rgba(255, 255, 255, 0.7);
+            color: #94a3b8;
             text-decoration: none;
-            transition: all 0.3s;
+            transition: var(--transition-base);
             display: flex;
             align-items: center;
             gap: 8px;
+            font-size: 0.95rem;
         }
         
         .footer-modern .footer-links a:hover {
             color: white;
-            padding-left: 5px;
+            transform: translateX(4px);
         }
         
         .footer-modern .footer-links a i {
-            color: #667eea;
+            color: #6366f1;
+            transition: var(--transition-base);
+        }
+
+        .theme-admin .footer-modern .footer-links a i {
+            color: #f43f5e;
+        }
+
+        .theme-staff .footer-modern .footer-links a i {
+            color: #10b981;
         }
         
         .footer-modern .footer-divider {
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
-            margin: 30px 0 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            margin: 40px 0 0px;
         }
         
         .footer-modern .footer-bottom {
             text-align: center;
-            padding: 20px 0;
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 30px 0;
         }
         
         .footer-modern .footer-bottom p {
             margin: 0;
             font-size: 0.9rem;
-            opacity: 0.7;
+            opacity: 0.8;
         }
         
         .footer-modern .footer-bottom a {
-            color: #667eea;
+            color: #818cf8;
             text-decoration: none;
-            font-weight: 500;
+            font-weight: 600;
+            transition: var(--transition-base);
         }
         
         .footer-modern .footer-bottom a:hover {
-            color: #764ba2;
-            text-decoration: underline;
+            color: white;
         }
         
         .footer-modern .social-links {
             display: flex;
             gap: 15px;
             justify-content: center;
-            margin-bottom: 15px;
+            margin-bottom: 20px;
         }
         
         .footer-modern .social-links a {
-            width: 40px;
-            height: 40px;
+            width: 44px;
+            height: 44px;
             border-radius: 50%;
-            background: rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.03);
             display: flex;
             align-items: center;
             justify-content: center;
-            color: white;
-            transition: all 0.3s;
+            color: #94a3b8;
+            transition: var(--transition-base);
+            font-size: 1.1rem;
+            border: 1px solid rgba(255, 255, 255, 0.05);
         }
         
         .footer-modern .social-links a:hover {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            transform: translateY(-3px);
+            background: var(--theme-public-gradient);
+            color: white;
+            border-color: transparent;
+            transform: translateY(-4px) scale(1.05);
+            box-shadow: 0 8px 20px var(--theme-public-glow);
+        }
+
+        .theme-admin .footer-modern .social-links a:hover {
+            background: var(--theme-admin-gradient);
+            box-shadow: 0 8px 20px var(--theme-admin-glow);
+        }
+
+        .theme-staff .footer-modern .social-links a:hover {
+            background: var(--theme-staff-gradient);
+            box-shadow: 0 8px 20px var(--theme-staff-glow);
         }
         
         .footer-section-title {
             color: white;
-            font-weight: 600;
-            margin-bottom: 15px;
-            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+            font-size: 1.05rem;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
         }
     </style>
 </head>
-<body>
+@{
+    var userEmail = Context.Session.GetString("UserEmail");
+    var userRole = Context.Session.GetInt32("UserRole");
+    string roleThemeClass = "";
+    if (!string.IsNullOrEmpty(userEmail))
+    {
+        if (userRole == 0) roleThemeClass = "theme-admin";
+        else if (userRole == 1) roleThemeClass = "theme-staff";
+        else if (userRole == 2) roleThemeClass = "theme-lecturer";
+    }
+}
+<body class="@roleThemeClass">
     <header>
-        <nav class="navbar navbar-expand-sm navbar-modern">
-            <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">
-                    <i class="bi bi-newspaper"></i>
-                    FUNews
+        <nav class="navbar navbar-expand-sm navbar-modern py-3">
+            <div class="container-fluid px-md-4">
+                <a class="navbar-brand d-flex align-items-center" asp-area="" asp-controller="Home" asp-action="Index">
+                    <i class="bi bi-newspaper me-2" style="font-size: 1.5rem;"></i>
+                    <span>FUNews</span>
                 </a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
+                <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse">
                     <span class="navbar-toggler-icon"></span>
                 </button>
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
-                        @{
-                            var userEmail = Context.Session.GetString("UserEmail");
-                            var userRole = Context.Session.GetInt32("UserRole");
-                        }
-                        
+                    <ul class="navbar-nav flex-grow-1 ms-3">
                         @if (string.IsNullOrEmpty(userEmail))
                         {
                             <li class="nav-item">
@@ -310,12 +280,12 @@
                             {
                                 <li class="nav-item dropdown">
                                     <a class="nav-link dropdown-toggle" href="#" id="adminDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                        <i class="bi bi-shield me-1"></i>Admin
+                                        <i class="bi bi-shield-shaded me-1"></i>Admin Panel
                                     </a>
-                                    <ul class="dropdown-menu">
-                                        <li><a class="dropdown-item" asp-area="" asp-controller="Admin" asp-action="Dashboard"><i class="bi bi-speedometer2"></i>Dashboard</a></li>
-                                        <li><a class="dropdown-item" asp-area="" asp-controller="Admin" asp-action="Accounts"><i class="bi bi-people"></i>Manage Accounts</a></li>
-                                        <li><a class="dropdown-item" asp-area="" asp-controller="Admin" asp-action="Reports"><i class="bi bi-bar-chart"></i>Reports</a></li>
+                                    <ul class="dropdown-menu border-0">
+                                        <li><a class="dropdown-item" asp-area="" asp-controller="Admin" asp-action="Dashboard"><i class="bi bi-speedometer2 me-2"></i>Dashboard</a></li>
+                                        <li><a class="dropdown-item" asp-area="" asp-controller="Admin" asp-action="Accounts"><i class="bi bi-people me-2"></i>Manage Accounts</a></li>
+                                        <li><a class="dropdown-item" asp-area="" asp-controller="Admin" asp-action="Reports"><i class="bi bi-bar-chart me-2"></i>Reports</a></li>
                                     </ul>
                                 </li>
                             }
@@ -324,14 +294,14 @@
                             {
                                 <li class="nav-item dropdown">
                                     <a class="nav-link dropdown-toggle" href="#" id="staffDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                        <i class="bi bi-briefcase me-1"></i>Staff
+                                        <i class="bi bi-briefcase me-1"></i>Staff Panel
                                     </a>
-                                    <ul class="dropdown-menu">
-                                        <li><a class="dropdown-item" asp-area="" asp-controller="Staff" asp-action="Dashboard"><i class="bi bi-speedometer2"></i>Dashboard</a></li>
-                                        <li><a class="dropdown-item" asp-area="" asp-controller="Staff" asp-action="Categories"><i class="bi bi-folder"></i>Manage Categories</a></li>
-                                        <li><a class="dropdown-item" asp-area="" asp-controller="Staff" asp-action="News"><i class="bi bi-newspaper"></i>Manage News</a></li>
-                                        <li><a class="dropdown-item" asp-area="" asp-controller="Staff" asp-action="Profile"><i class="bi bi-person"></i>Profile</a></li>
-                                        <li><a class="dropdown-item" asp-area="" asp-controller="Staff" asp-action="NewsHistory"><i class="bi bi-clock-history"></i>News History</a></li>
+                                    <ul class="dropdown-menu border-0">
+                                        <li><a class="dropdown-item" asp-area="" asp-controller="Staff" asp-action="Dashboard"><i class="bi bi-speedometer2 me-2"></i>Dashboard</a></li>
+                                        <li><a class="dropdown-item" asp-area="" asp-controller="Staff" asp-action="Categories"><i class="bi bi-folder me-2"></i>Manage Categories</a></li>
+                                        <li><a class="dropdown-item" asp-area="" asp-controller="Staff" asp-action="News"><i class="bi bi-newspaper me-2"></i>Manage News</a></li>
+                                        <li><a class="dropdown-item" asp-area="" asp-controller="Staff" asp-action="Profile"><i class="bi bi-person me-2"></i>Profile Settings</a></li>
+                                        <li><a class="dropdown-item" asp-area="" asp-controller="Staff" asp-action="NewsHistory"><i class="bi bi-clock-history me-2"></i>News History</a></li>
                                     </ul>
                                 </li>
                             }
@@ -340,24 +310,24 @@
                             {
                                 <li class="nav-item">
                                     <a class="nav-link" asp-area="" asp-controller="Lecturer" asp-action="Index">
-                                        <i class="bi bi-newspaper me-1"></i>News
+                                        <i class="bi bi-journals me-1"></i>News Board
                                     </a>
                                 </li>
                             }
                             
                             <li class="nav-item">
                                 <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Index">
-                                    <i class="bi bi-globe me-1"></i>Public News
+                                    <i class="bi bi-globe me-1"></i>Public Home
                                 </a>
                             </li>
                         }
                     </ul>
                     
-                    <ul class="navbar-nav">
+                    <ul class="navbar-nav align-items-center">
                         @if (string.IsNullOrEmpty(userEmail))
                         {
                             <li class="nav-item">
-                                <a class="nav-link" asp-area="" asp-controller="Auth" asp-action="Login">
+                                <a class="nav-link btn btn-outline-primary px-4 py-2 border-2 rounded-pill font-weight-bold" asp-area="" asp-controller="Auth" asp-action="Login">
                                     <i class="bi bi-box-arrow-in-right me-1"></i>Login
                                 </a>
                             </li>
@@ -365,15 +335,18 @@
                         else
                         {
                             <li class="nav-item dropdown">
-                                <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                    <i class="bi bi-person-circle me-1"></i>@Context.Session.GetString("UserName")
+                                <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <span class="user-badge">
+                                        <i class="bi bi-person-circle"></i>
+                                        @Context.Session.GetString("UserName")
+                                    </span>
                                 </a>
-                                <ul class="dropdown-menu dropdown-menu-end">
+                                <ul class="dropdown-menu dropdown-menu-end border-0">
                                     <li>
                                         <form asp-controller="Auth" asp-action="Logout" method="post" class="d-inline">
                                             @Html.AntiForgeryToken()
-                                            <button type="submit" class="dropdown-item">
-                                                <i class="bi bi-box-arrow-right"></i>Logout
+                                            <button type="submit" class="dropdown-item text-danger py-2">
+                                                <i class="bi bi-box-arrow-right me-2"></i>Logout
                                             </button>
                                         </form>
                                     </li>
@@ -386,64 +359,63 @@
         </nav>
     </header>
 
-    <main class="main-content">
+    <main class="main-content py-4">
         <div class="container pb-4">
             @RenderBody()
         </div>
     </main>
 
     <footer class="footer-modern">
-        <div class="container">
-            <div class="row g-4">
+        <div class="container px-md-4">
+            <div class="row g-5">
                 <div class="col-lg-4">
                     <div class="footer-brand">
                         <i class="bi bi-newspaper"></i>
-                        FUNews Management
+                        <span>FUNews Management</span>
                     </div>
-                    <p style="font-size: 0.9rem; opacity: 0.7; margin-bottom: 0;">
-                        A modern news management system for distance learning platforms. Create, manage, and publish news articles with ease.
+                    <p class="mb-0" style="font-size: 0.95rem; line-height: 1.6;">
+                        A state-of-the-art content management platform for academic communities. Create, categorize, and distribute relevant news with elegance.
                     </p>
                 </div>
-                <div class="col-lg-2 col-md-4">
-                    <h6 class="footer-section-title">Quick Links</h6>
+                <div class="col-lg-2 col-md-4 col-6">
+                    <h6 class="footer-section-title">Navigation</h6>
                     <ul class="footer-links">
                         <li><a asp-controller="Home" asp-action="Index"><i class="bi bi-chevron-right"></i>Home</a></li>
                         <li><a asp-controller="Home" asp-action="Privacy"><i class="bi bi-chevron-right"></i>Privacy Policy</a></li>
-                        <li><a asp-controller="Auth" asp-action="Login"><i class="bi bi-chevron-right"></i>Login</a></li>
+                        <li><a asp-controller="Auth" asp-action="Login"><i class="bi bi-chevron-right"></i>Portal Login</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-3 col-md-4 col-6">
+                    <h6 class="footer-section-title">Key Core Modules</h6>
+                    <ul class="footer-links">
+                        <li><a href="#"><i class="bi bi-chevron-right"></i>News Publisher</a></li>
+                        <li><a href="#"><i class="bi bi-chevron-right"></i>Category Tree System</a></li>
+                        <li><a href="#"><i class="bi bi-chevron-right"></i>Account Control List</a></li>
+                        <li><a href="#"><i class="bi bi-chevron-right"></i>Statistical Reporting</a></li>
                     </ul>
                 </div>
                 <div class="col-lg-3 col-md-4">
-                    <h6 class="footer-section-title">Features</h6>
+                    <h6 class="footer-section-title">Office & Contacts</h6>
                     <ul class="footer-links">
-                        <li><a href="#"><i class="bi bi-chevron-right"></i>News Management</a></li>
-                        <li><a href="#"><i class="bi bi-chevron-right"></i>Category System</a></li>
-                        <li><a href="#"><i class="bi bi-chevron-right"></i>User Management</a></li>
-                        <li><a href="#"><i class="bi bi-chevron-right"></i>Reports</a></li>
-                    </ul>
-                </div>
-                <div class="col-lg-3 col-md-4">
-                    <h6 class="footer-section-title">Contact</h6>
-                    <ul class="footer-links">
-                        <li><a href="#"><i class="bi bi-geo-alt"></i>FPT University, Can Tho</a></li>
-                        <li><a href="#"><i class="bi bi-envelope"></i>funews@example.edu.vn</a></li>
-                        <li><a href="#"><i class="bi bi-telephone"></i>+84 123 456 789</a></li>
+                        <li><span><i class="bi bi-geo-alt me-2"></i>Can Tho Campus, FPT</span></li>
+                        <li><span><i class="bi bi-envelope me-2"></i>funews@fpt.edu.vn</span></li>
+                        <li><span><i class="bi bi-telephone me-2"></i>+84 292 730 3636</span></li>
                     </ul>
                 </div>
             </div>
             
             <div class="footer-divider"></div>
             
-            <div class="footer-bottom">
-                <div class="social-links">
-                    <a href="#"><i class="bi bi-facebook"></i></a>
-                    <a href="#"><i class="bi bi-twitter"></i></a>
-                    <a href="#"><i class="bi bi-instagram"></i></a>
-                    <a href="#"><i class="bi bi-linkedin"></i></a>
-                </div>
-                <p style="margin-bottom: 0;">
-                    &copy; 2026 <a asp-area="" asp-controller="Home" asp-action="Index">FUNews Management</a>. 
-                    All rights reserved. Powered by <a href="#">FPT Education</a>.
+            <div class="footer-bottom d-flex flex-column flex-md-row justify-content-between align-items-center">
+                <p class="mb-3 mb-md-0">
+                    &copy; 2026 <a asp-area="" asp-controller="Home" asp-action="Index">FUNews Portal</a>. All rights reserved.
                 </p>
+                <div class="social-links mb-0">
+                    <a href="#" aria-label="Facebook"><i class="bi bi-facebook"></i></a>
+                    <a href="#" aria-label="Twitter"><i class="bi bi-twitter-x"></i></a>
+                    <a href="#" aria-label="Instagram"><i class="bi bi-instagram"></i></a>
+                    <a href="#" aria-label="Linkedin"><i class="bi bi-linkedin"></i></a>
+                </div>
             </div>
         </div>
     </footer>
