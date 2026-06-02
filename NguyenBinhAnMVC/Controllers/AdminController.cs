@@ -68,22 +68,35 @@ namespace NguyenBinhAnMVC.Controllers
 
         // ── Account Management ──────────────────────────────────────────────
 
-        public async Task<IActionResult> Accounts(string? searchTerm)
+        public async Task<IActionResult> Accounts(string? searchTerm, int page = 1)
         {
             var authResult = RequireAdminRole();
             if (authResult != null) return authResult;
 
-            var accounts = await _systemAccountService.GetAllAccountsAsync();
+            const int pageSize = 5;
+            if (page < 1) page = 1;
+
+            var allAccounts = await _systemAccountService.GetAllAccountsAsync();
 
             if (!string.IsNullOrWhiteSpace(searchTerm))
             {
-                accounts = accounts.Where(a =>
+                allAccounts = allAccounts.Where(a =>
                     (a.AccountName?.Contains(searchTerm, StringComparison.OrdinalIgnoreCase) ?? false) ||
-                    (a.AccountEmail?.Contains(searchTerm, StringComparison.OrdinalIgnoreCase) ?? false));
+                    (a.AccountEmail?.Contains(searchTerm, StringComparison.OrdinalIgnoreCase) ?? false)).ToList();
                 ViewBag.SearchTerm = searchTerm;
             }
 
-            return View(accounts);
+            var paginatedAccounts = allAccounts
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .ToList();
+
+            ViewBag.CurrentPage = page;
+            ViewBag.TotalPages = (int)Math.Ceiling(allAccounts.ToList().Count / (double)pageSize);
+            ViewBag.TotalItems = allAccounts.ToList().Count;
+            ViewBag.PageSize = pageSize;
+
+            return View(paginatedAccounts);
         }
 
         [HttpGet]

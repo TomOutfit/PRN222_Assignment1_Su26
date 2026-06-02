@@ -67,25 +67,38 @@ namespace NguyenBinhAnMVC.Controllers
 
         // ── Category Management ─────────────────────────────────────────────
 
-        public async Task<IActionResult> Categories(string? searchTerm)
+        public async Task<IActionResult> Categories(string? searchTerm, int page = 1)
         {
             var authResult = RequireStaffRole();
             if (authResult != null) return authResult;
 
-            var categories = await _categoryService.GetActiveCategoriesAsync();
+            const int pageSize = 5;
+            if (page < 1) page = 1;
+
+            var allCategories = (await _categoryService.GetActiveCategoriesAsync()).ToList();
 
             if (!string.IsNullOrWhiteSpace(searchTerm))
             {
-                categories = categories.Where(c =>
-                    c.CategoryName.Contains(searchTerm, StringComparison.OrdinalIgnoreCase) ||
-                    c.CategoryDescription.Contains(searchTerm, StringComparison.OrdinalIgnoreCase));
+                allCategories = allCategories
+                    .Where(c => c.CategoryName.Contains(searchTerm, StringComparison.OrdinalIgnoreCase) ||
+                                c.CategoryDescription.Contains(searchTerm, StringComparison.OrdinalIgnoreCase))
+                    .ToList();
                 ViewBag.SearchTerm = searchTerm;
             }
 
+            var paginatedCategories = allCategories
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .ToList();
+
             // Pass parent categories for the Create/Edit modals
             ViewBag.ParentCategories = await _categoryService.GetParentCategoriesAsync();
+            ViewBag.CurrentPage = page;
+            ViewBag.TotalPages = (int)Math.Ceiling(allCategories.Count / (double)pageSize);
+            ViewBag.TotalItems = allCategories.Count;
+            ViewBag.PageSize = pageSize;
 
-            return View(categories);
+            return View(paginatedCategories);
         }
 
         [HttpGet]
@@ -186,21 +199,30 @@ namespace NguyenBinhAnMVC.Controllers
 
         // ── News Management ─────────────────────────────────────────────────
 
-        public async Task<IActionResult> News(string? searchTerm)
+        public async Task<IActionResult> News(string? searchTerm, int page = 1)
         {
             var authResult = RequireStaffRole();
             if (authResult != null) return authResult;
 
+            const int pageSize = 5;
+            if (page < 1) page = 1;
+
             var userId = GetCurrentUserId()!.Value;
-            var newsArticles = await _newsArticleService.GetNewsByAuthorAsync(userId);
+            var allNews = (await _newsArticleService.GetNewsByAuthorAsync(userId)).ToList();
 
             if (!string.IsNullOrWhiteSpace(searchTerm))
             {
-                newsArticles = newsArticles.Where(n =>
-                    (n.NewsTitle?.Contains(searchTerm, StringComparison.OrdinalIgnoreCase) ?? false) ||
-                    (n.Headline?.Contains(searchTerm, StringComparison.OrdinalIgnoreCase) ?? false));
+                allNews = allNews
+                    .Where(n => (n.NewsTitle?.Contains(searchTerm, StringComparison.OrdinalIgnoreCase) ?? false) ||
+                                (n.Headline?.Contains(searchTerm, StringComparison.OrdinalIgnoreCase) ?? false))
+                    .ToList();
                 ViewBag.SearchTerm = searchTerm;
             }
+
+            var paginatedNews = allNews
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .ToList();
 
             // Load categories and tags for Create/Edit modals + display names
             var categories = await _categoryService.GetActiveCategoriesAsync();
@@ -208,8 +230,12 @@ namespace NguyenBinhAnMVC.Controllers
             ViewBag.CategoriesDict = categories.ToDictionary(c => c.CategoryID, c => c.CategoryName);
             ViewBag.Categories = categories;
             ViewBag.Tags = tags;
+            ViewBag.CurrentPage = page;
+            ViewBag.TotalPages = (int)Math.Ceiling(allNews.Count / (double)pageSize);
+            ViewBag.TotalItems = allNews.Count;
+            ViewBag.PageSize = pageSize;
 
-            return View(newsArticles);
+            return View(paginatedNews);
         }
 
         [HttpGet]
@@ -385,18 +411,30 @@ namespace NguyenBinhAnMVC.Controllers
 
         // ── News History ────────────────────────────────────────────────────
 
-        public async Task<IActionResult> NewsHistory()
+        public async Task<IActionResult> NewsHistory(int page = 1)
         {
             var authResult = RequireStaffRole();
             if (authResult != null) return authResult;
 
+            const int pageSize = 5;
+            if (page < 1) page = 1;
+
             var userId = GetCurrentUserId()!.Value;
-            var newsHistory = await _newsArticleService.GetNewsHistoryAsync(userId);
+            var allHistory = (await _newsArticleService.GetNewsHistoryAsync(userId)).OrderByDescending(n => n.CreatedDate).ToList();
+
+            var paginatedHistory = allHistory
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .ToList();
 
             var categories = await _categoryService.GetActiveCategoriesAsync();
             ViewBag.CategoriesDict = categories.ToDictionary(c => c.CategoryID, c => c.CategoryName);
+            ViewBag.CurrentPage = page;
+            ViewBag.TotalPages = (int)Math.Ceiling(allHistory.Count / (double)pageSize);
+            ViewBag.TotalItems = allHistory.Count;
+            ViewBag.PageSize = pageSize;
 
-            return View(newsHistory);
+            return View(paginatedHistory);
         }
     }
 }
