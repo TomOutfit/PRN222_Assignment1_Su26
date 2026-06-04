@@ -220,5 +220,106 @@ namespace NguyenBinhAnMVC.Controllers
 
             return View("NewsReport", newsArticles);
         }
+
+        [HttpGet]
+        public async Task<IActionResult> ExportNewsReportJson(DateTime startDate, DateTime endDate)
+        {
+            var authResult = RequireAdminRole();
+            if (authResult != null) return authResult;
+
+            if (startDate > endDate)
+            {
+                return BadRequest("Start date must be before end date.");
+            }
+
+            var newsArticles = await _newsArticleService.GetNewsByDateRangeAsync(startDate, endDate);
+
+            // Load accounts and categories for display names
+            var accounts = await _systemAccountService.GetAllAccountsAsync();
+            var categories = await _categoryService.GetActiveCategoriesAsync();
+
+            var accountsDict = accounts.ToDictionary(a => a.AccountID, a => a.AccountName ?? "Unknown");
+            var categoriesDict = categories.ToDictionary(c => c.CategoryID, c => c.CategoryName);
+
+            var reportData = newsArticles.OrderByDescending(n => n.CreatedDate).Select(n => new
+            {
+                n.NewsArticleID,
+                NewsTitle = n.NewsTitle ?? string.Empty,
+                Headline = n.Headline ?? string.Empty,
+                CreatedDate = n.CreatedDate?.ToString("yyyy-MM-dd HH:mm:ss") ?? "N/A",
+                NewsContent = n.NewsContent ?? string.Empty,
+                NewsSource = n.NewsSource ?? string.Empty,
+                CategoryID = n.CategoryID,
+                CategoryName = n.CategoryID.HasValue && categoriesDict.TryGetValue(n.CategoryID.Value, out var catName) ? catName : "N/A",
+                Status = n.NewsStatus == true ? "Active" : "Inactive",
+                CreatedByID = n.CreatedByID,
+                CreatedByName = n.CreatedByID.HasValue && accountsDict.TryGetValue(n.CreatedByID.Value, out var accName) ? accName : "Unknown",
+                UpdatedByID = n.UpdatedByID,
+                ModifiedDate = n.ModifiedDate?.ToString("yyyy-MM-dd HH:mm:ss") ?? "N/A"
+            }).ToList();
+
+            var jsonString = System.Text.Json.JsonSerializer.Serialize(reportData, new System.Text.Json.JsonSerializerOptions
+            {
+                WriteIndented = true
+            });
+
+            var fileName = $"NewsReport_{startDate:yyyyMMdd}_to_{endDate:yyyyMMdd}.json";
+            return File(System.Text.Encoding.UTF8.GetBytes(jsonString), "application/json", fileName);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> ExportNewsReportCsv(DateTime startDate, DateTime endDate)
+        {
+            var authResult = RequireAdminRole();
+            if (authResult != null) return authResult;
+
+            if (startDate > endDate)
+            {
+                return BadRequest("Start date must be before end date.");
+            }
+
+            var newsArticles = await _newsArticleService.GetNewsByDateRangeAsync(startDate, endDate);
+
+            // Load accounts and categories for display names
+            var accounts = await _systemAccountService.GetAllAccountsAsync();
+            var categories = await _categoryService.GetActiveCategoriesAsync();
+
+            var accountsDict = accounts.ToDictionary(a => a.AccountID, a => a.AccountName ?? "Unknown");
+            var categoriesDict = categories.ToDictionary(c => c.CategoryID, c => c.CategoryName);
+
+            var builder = new System.Text.StringBuilder();
+            builder.AppendLine("ArticleID,Title,Headline,CreatedDate,Source,Category,Status,Author,ModifiedDate");
+
+            foreach (var news in newsArticles.OrderByDescending(n => n.CreatedDate))
+            {
+                var authorName = news.CreatedByID.HasValue && accountsDict.TryGetValue(news.CreatedByID.Value, out var accName) ? accName : "Unknown";
+                var catName = news.CategoryID.HasValue && categoriesDict.TryGetValue(news.CategoryID.Value, out var cName) ? cName : "N/A";
+
+                string EscapeCsv(string? value)
+                {
+                    if (string.IsNullOrEmpty(value)) return "";
+                    value = value.Replace("\"", "\"\"");
+                    if (value.Contains(",") || value.Contains("\"") || value.Contains("\r") || value.Contains("\n"))
+                    {
+                        return $"\"{value}\"";
+                    }
+                    return value;
+                }
+
+                builder.AppendLine($"{EscapeCsv(news.NewsArticleID)}," +
+                                   $"{EscapeCsv(news.NewsTitle)}," +
+                                   $"{EscapeCsv(news.Headline)}," +
+                                   $"{EscapeCsv(news.CreatedDate?.ToString("yyyy-MM-dd HH:mm:ss"))}," +
+                                   $"{EscapeCsv(news.NewsSource)}," +
+                                   $"{EscapeCsv(catName)}," +
+                                   $"{(news.NewsStatus == true ? "Active" : "Inactive")}," +
+                                   $"{EscapeCsv(authorName)}," +
+                                   $"{EscapeCsv(news.ModifiedDate?.ToString("yyyy-MM-dd HH:mm:ss"))}");
+            }
+
+            var fileName = $"NewsReport_{startDate:yyyyMMdd}_to_{endDate:yyyyMMdd}.csv";
+            var bytes = System.Text.Encoding.UTF8.GetPreamble().Concat(System.Text.Encoding.UTF8.GetBytes(builder.ToString())).ToArray();
+            return File(bytes, "text/csv", fileName);
+        }
     }
 }
