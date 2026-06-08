@@ -29,7 +29,7 @@ builder.Services.AddScoped<IDashboardService, DashboardService>();
 // ITagService registered as Singleton (Singleton pattern requirement)
 // TagService itself is stateless — safe to use as singleton
 // Note: uses ITagRepository which is scoped, so we use a factory to resolve per-request
-builder.Services.AddScoped<ITagService, TagService>();
+builder.Services.AddSingleton<ITagService, TagService>();
 
 // Add session support
 builder.Services.AddSession(options =>

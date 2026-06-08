@@ -4,64 +4,67 @@
 
 <style>
     .dashboard-header {
-        background: linear-gradient(135deg, #ff6b6b 0%, #ff8e53 100%);
+        background: var(--theme-admin-gradient);
         color: white;
-        padding: 40px 0;
-        margin-bottom: 32px;
-        border-radius: 0 0 30px 30px;
+        padding: 50px 0;
+        margin-bottom: 35px;
+        border-radius: var(--radius-lg);
         position: relative;
         overflow: hidden;
+        box-shadow: 0 10px 30px var(--theme-admin-glow);
     }
 
     .dashboard-header::before {
         content: '';
         position: absolute;
-        top: -50%;
-        right: -10%;
-        width: 400px;
-        height: 400px;
-        background: rgba(255, 255, 255, 0.1);
+        top: -30%;
+        right: -5%;
+        width: 300px;
+        height: 300px;
+        background: rgba(255, 255, 255, 0.08);
         border-radius: 50%;
     }
 
     .dashboard-header h1 {
-        font-weight: 700;
-        position: relative;
-        z-index: 1;
+        font-weight: 800;
+        font-size: 2.6rem;
+        letter-spacing: -0.5px;
     }
 
     .dashboard-header p {
         opacity: 0.9;
-        position: relative;
-        z-index: 1;
+        font-weight: 500;
     }
 
     .stat-card {
         background: white;
-        border-radius: 16px;
-        padding: 20px 24px;
-        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+        border-radius: var(--radius-lg);
+        padding: 24px 28px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.02);
         display: flex;
         align-items: center;
-        gap: 16px;
-        transition: transform 0.2s ease, box-shadow 0.2s ease;
+        gap: 20px;
+        border: 1px solid rgba(226, 232, 240, 0.8);
+        transition: var(--transition-base);
     }
 
     .stat-card:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+        transform: translateY(-5px);
+        box-shadow: 0 16px 35px rgba(220, 38, 38, 0.05);
+        border-color: rgba(220, 38, 38, 0.15);
     }
 
     .stat-card .stat-icon {
-        width: 48px;
-        height: 48px;
-        border-radius: 12px;
+        width: 54px;
+        height: 54px;
+        border-radius: 14px;
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 22px;
+        font-size: 24px;
         color: white;
         flex-shrink: 0;
+        box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
     }
 
     .stat-card .stat-body {
@@ -69,43 +72,47 @@
     }
 
     .stat-card .stat-number {
-        font-size: 1.6rem;
-        font-weight: 700;
-        color: #1a1a2e;
+        font-size: 1.8rem;
+        font-weight: 800;
+        color: #0f172a;
         line-height: 1.2;
+        letter-spacing: -0.5px;
     }
 
     .stat-card .stat-label {
-        color: #999;
-        font-size: 0.82rem;
+        color: #64748b;
+        font-size: 0.88rem;
+        font-weight: 600;
         margin-top: 2px;
     }
 
     .section-label {
-        font-size: 0.75rem;
-        font-weight: 600;
-        letter-spacing: 0.08em;
+        font-size: 0.78rem;
+        font-weight: 700;
+        letter-spacing: 0.1em;
         text-transform: uppercase;
-        color: #aaa;
-        margin-bottom: 12px;
+        color: #94a3b8;
+        margin-bottom: 16px;
         padding-left: 4px;
     }
 
     .chart-card {
         background: white;
-        border-radius: 16px;
-        padding: 24px;
-        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+        border-radius: var(--radius-lg);
+        padding: 30px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.02);
+        border: 1px solid rgba(226, 232, 240, 0.8);
     }
 
     .chart-card .chart-title {
-        font-weight: 600;
-        color: #1a1a2e;
-        margin-bottom: 20px;
-        font-size: 0.95rem;
+        font-weight: 700;
+        color: #0f172a;
+        margin-bottom: 25px;
+        font-size: 1.05rem;
         display: flex;
         align-items: center;
-        gap: 8px;
+        gap: 10px;
+        letter-spacing: -0.25px;
     }
 </style>
 
@@ -128,10 +135,10 @@
 
 <!-- Stats Row -->
 <div class="section-label">System Overview</div>
-<div class="row g-3 mb-5">
+<div class="row g-4 mb-5">
     <div class="col-6 col-lg-3">
         <div class="stat-card">
-            <div class="stat-icon" style="background: linear-gradient(135deg, #667eea, #764ba2);">
+            <div class="stat-icon" style="background: linear-gradient(135deg, #4f46e5, #6366f1); box-shadow: 0 4px 12px rgba(79, 70, 229, 0.2);">
                 <i class="bi bi-people"></i>
             </div>
             <div class="stat-body">
@@ -142,7 +149,7 @@
     </div>
     <div class="col-6 col-lg-3">
         <div class="stat-card">
-            <div class="stat-icon" style="background: linear-gradient(135deg, #f093fb, #f5576c);">
+            <div class="stat-icon" style="background: linear-gradient(135deg, #ec4899, #f43f5e); box-shadow: 0 4px 12px rgba(236, 72, 153, 0.2);">
                 <i class="bi bi-person-badge"></i>
             </div>
             <div class="stat-body">
@@ -153,7 +160,7 @@
     </div>
     <div class="col-6 col-lg-3">
         <div class="stat-card">
-            <div class="stat-icon" style="background: linear-gradient(135deg, #43e97b, #38f9d7);">
+            <div class="stat-icon" style="background: linear-gradient(135deg, #10b981, #06b6d4); box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2);">
                 <i class="bi bi-mortarboard"></i>
             </div>
             <div class="stat-body">
@@ -164,7 +171,7 @@
     </div>
     <div class="col-6 col-lg-3">
         <div class="stat-card">
-            <div class="stat-icon" style="background: linear-gradient(135deg, #4facfe, #00f2fe);">
+            <div class="stat-icon" style="background: var(--theme-admin-gradient); box-shadow: 0 4px 12px var(--theme-admin-glow);">
                 <i class="bi bi-newspaper"></i>
             </div>
             <div class="stat-body">
@@ -177,11 +184,11 @@
 
 <!-- Charts Row -->
 <div class="section-label">Analytics</div>
-<div class="row g-3">
+<div class="row g-4">
     <div class="col-lg-4">
         <div class="chart-card">
             <div class="chart-title">
-                <i class="bi bi-pie-chart" style="color:#667eea;"></i>
+                <i class="bi bi-pie-chart" style="color: #dc2626; font-size: 1.2rem;"></i>
                 Accounts by Role
             </div>
             <canvas id="accountsByRoleChart" height="200"></canvas>
@@ -190,7 +197,7 @@
     <div class="col-lg-8">
         <div class="chart-card">
             <div class="chart-title">
-                <i class="bi bi-bar-chart" style="color:#667eea;"></i>
+                <i class="bi bi-bar-chart" style="color: #dc2626; font-size: 1.2rem;"></i>
                 News Articles — Last 6 Months
             </div>
             <canvas id="newsPerMonthChart" height="100"></canvas>
@@ -210,7 +217,7 @@
 
                 const roleLabels = Object.keys(data.accountsByRole);
                 const roleValues = Object.values(data.accountsByRole);
-                const roleColors = ['#667eea', '#f5576c', '#38f9d7', '#ff8e53'];
+                const roleColors = ['#dc2626', '#f87171', '#fb7185', '#fda4af'];
 
                 if (accountsByRoleChart) {
                     accountsByRoleChart.data.labels = roleLabels;
@@ -231,8 +238,17 @@
                         },
                         options: {
                             responsive: true,
-                            cutout: '60%',
-                            plugins: { legend: { position: 'bottom', labels: { padding: 15, usePointStyle: true, font: { size: 12 } } } }
+                            cutout: '68%',
+                            plugins: { 
+                                legend: { 
+                                    position: 'bottom', 
+                                    labels: { 
+                                        padding: 20, 
+                                        usePointStyle: true, 
+                                        font: { size: 12, weight: 'bold' } 
+                                    } 
+                                } 
+                            }
                         }
                     });
                 }
@@ -253,17 +269,24 @@
                             datasets: [{
                                 label: 'Articles',
                                 data: monthCounts,
-                                backgroundColor: 'rgba(102, 126, 234, 0.7)',
-                                borderColor: '#667eea',
-                                borderWidth: 1,
-                                borderRadius: 6
+                                backgroundColor: 'rgba(220, 38, 38, 0.75)',
+                                borderColor: '#dc2626',
+                                borderWidth: 0,
+                                borderRadius: 8
                             }]
                         },
                         options: {
                             responsive: true,
                             plugins: { legend: { display: false } },
                             scales: {
-                                y: { beginAtZero: true, ticks: { stepSize: 1 } }
+                                y: { 
+                                    beginAtZero: true, 
+                                    ticks: { stepSize: 1 },
+                                    grid: { color: '#f1f5f9' }
+                                },
+                                x: {
+                                    grid: { display: false }
+                                }
                             }
                         }
                     });
@@ -292,7 +315,7 @@
                         el.textContent = value;
                         el.style.animation = 'none';
                         el.offsetHeight;
-                        el.style.animation = 'popIn 0.3s ease';
+                        el.style.animation = 'popIn 0.35s cubic-bezier(0.34, 1.56, 0.64, 1)';
                     }
                 }
             } catch (e) {
@@ -308,7 +331,7 @@
     <style>
         @@keyframes popIn {
             0% { transform: scale(1); }
-            50% { transform: scale(1.15); color: #ff6b6b; }
+            50% { transform: scale(1.2); color: #dc2626; }
             100% { transform: scale(1); }
         }
     </style>

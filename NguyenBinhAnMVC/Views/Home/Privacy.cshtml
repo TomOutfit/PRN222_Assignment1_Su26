@@ -1,10 +1,80 @@
-﻿@{
+@{
     ViewData["Title"] = "Privacy Policy";
 }
 
+<style>
+    .privacy-hero {
+        background: var(--theme-public-gradient);
+        color: white;
+        padding: 50px 0;
+        margin-bottom: 40px;
+        border-radius: var(--radius-lg);
+        position: relative;
+        overflow: hidden;
+        box-shadow: 0 10px 30px var(--theme-public-glow);
+    }
+    
+    .privacy-hero::before {
+        content: '';
+        position: absolute;
+        top: -30%;
+        right: -5%;
+        width: 300px;
+        height: 300px;
+        background: rgba(255, 255, 255, 0.08);
+        border-radius: 50%;
+    }
+
+    .privacy-hero h1 {
+        font-weight: 800;
+        font-size: 2.6rem;
+        letter-spacing: -0.5px;
+    }
+
+    .privacy-hero i {
+        color: white !important;
+        text-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    }
+    
+    .privacy-hero p {
+        opacity: 0.9;
+        font-weight: 500;
+    }
+
+    .breadcrumb-custom {
+        background: transparent;
+        padding: 0;
+        margin-bottom: 25px;
+    }
+    
+    .breadcrumb-custom .breadcrumb-item a {
+        color: #4f46e5;
+        text-decoration: none;
+        font-weight: 600;
+        transition: var(--transition-base);
+    }
+
+    .breadcrumb-custom .breadcrumb-item a:hover {
+        color: #6366f1;
+    }
+
+    .breadcrumb-custom .breadcrumb-item.active {
+        font-weight: 600;
+        color: #64748b;
+    }
+
+    .breadcrumb-custom .breadcrumb-item + .breadcrumb-item::before {
+        color: #cbd5e1;
+    }
+
+    .text-indigo-primary {
+        color: #4f46e5 !important;
+    }
+</style>
+
 <div class="row">
     <div class="col-12">
-        <nav aria-label="breadcrumb">
+        <nav aria-label="breadcrumb" class="breadcrumb-custom">
             <ol class="breadcrumb">
                 <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Home</a></li>
                 <li class="breadcrumb-item active" aria-current="page">Privacy Policy</li>
@@ -15,47 +85,47 @@
 
 <div class="row mb-4">
     <div class="col-12 text-center">
-        <div class="privacy-hero p-5 rounded-3">
-            <i class="bi bi-shield-lock-fill display-1 text-primary mb-3"></i>
-            <h1 class="display-6 fw-bold">Privacy Policy</h1>
-            <p class="text-muted">Last updated: May 21, 2026</p>
+        <div class="privacy-hero p-5">
+            <i class="bi bi-shield-lock-fill display-1 mb-3"></i>
+            <h1>Privacy Policy</h1>
+            <p class="mb-0">Last updated: May 21, 2026</p>
         </div>
     </div>
 </div>
 
 <div class="row">
     <div class="col-lg-8 mx-auto">
-        <div class="card shadow-sm mb-4">
+        <div class="card-modern mb-4">
             <div class="card-body p-4">
-                <h4 class="card-title mb-3">
-                    <i class="bi bi-collection text-primary me-2"></i>Introduction
+                <h4 class="card-title mb-3 font-weight-bold">
+                    <i class="bi bi-collection text-indigo-primary me-2"></i>Introduction
                 </h4>
-                <p>
+                <p class="mb-0" style="color: #475569; font-weight: 500; line-height: 1.7;">
                     FUNews Management System is committed to protecting your privacy and ensuring the security of your personal information. 
                     This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you use our website and services.
                 </p>
             </div>
         </div>
 
-        <div class="card shadow-sm mb-4">
+        <div class="card-modern mb-4">
             <div class="card-body p-4">
-                <h4 class="card-title mb-3">
-                    <i class="bi bi-database text-primary me-2"></i>Information We Collect
+                <h4 class="card-title mb-3 font-weight-bold">
+                    <i class="bi bi-database text-indigo-primary me-2"></i>Information We Collect
                 </h4>
                 <ul class="list-group list-group-flush">
-                    <li class="list-group-item">
+                    <li class="list-group-item bg-transparent" style="color: #475569; font-weight: 500;">
                         <i class="bi bi-person-check me-2 text-success"></i>
                         <strong>Account Information:</strong> Name, email address, password, and role within the organization
                     </li>
-                    <li class="list-group-item">
+                    <li class="list-group-item bg-transparent" style="color: #475569; font-weight: 500;">
                         <i class="bi bi-file-text me-2 text-success"></i>
                         <strong>Content Data:</strong> News articles, categories, tags, and related metadata you create or edit
                     </li>
-                    <li class="list-group-item">
+                    <li class="list-group-item bg-transparent" style="color: #475569; font-weight: 500;">
                         <i class="bi bi-clock-history me-2 text-success"></i>
                         <strong>Activity Logs:</strong> Creation dates, modification history, and access timestamps
                     </li>
-                    <li class="list-group-item">
+                    <li class="list-group-item bg-transparent" style="color: #475569; font-weight: 500;">
                         <i class="bi bi-globe me-2 text-success"></i>
                         <strong>Usage Data:</strong> Browser type, IP address, and pages visited
                     </li>
@@ -63,12 +133,12 @@
             </div>
         </div>
 
-        <div class="card shadow-sm mb-4">
+        <div class="card-modern mb-4">
             <div class="card-body p-4">
-                <h4 class="card-title mb-3">
-                    <i class="bi bi-gear text-primary me-2"></i>How We Use Your Information
+                <h4 class="card-title mb-3 font-weight-bold">
+                    <i class="bi bi-gear text-indigo-primary me-2"></i>How We Use Your Information
                 </h4>
-                <div class="row">
+                <div class="row" style="color: #475569; font-weight: 500;">
                     <div class="col-md-6 mb-3">
                         <div class="d-flex align-items-start">
                             <i class="bi bi-check-circle-fill text-success me-2 mt-1"></i>
@@ -109,24 +179,24 @@
             </div>
         </div>
 
-        <div class="card shadow-sm mb-4">
+        <div class="card-modern mb-4">
             <div class="card-body p-4">
-                <h4 class="card-title mb-3">
-                    <i class="bi bi-shield text-primary me-2"></i>Data Protection
+                <h4 class="card-title mb-3 font-weight-bold">
+                    <i class="bi bi-shield text-indigo-primary me-2"></i>Data Protection
                 </h4>
-                <p>We implement appropriate technical and organizational security measures to protect your data:</p>
-                <div class="alert alert-light border">
-                    <div class="row text-center">
+                <p style="color: #475569; font-weight: 500;">We implement appropriate technical and organizational security measures to protect your data:</p>
+                <div class="alert alert-light border shadow-none" style="background-color: #f8fafc; border-radius: 12px;">
+                    <div class="row text-center py-2" style="color: #475569; font-weight: 500;">
                         <div class="col-4">
-                            <i class="bi bi-lock-fill fs-3 text-primary"></i>
+                            <i class="bi bi-lock-fill fs-3 text-indigo-primary"></i>
                             <p class="mb-0 mt-2 small"><strong>Encryption</strong><br>SSL/TLS</p>
                         </div>
                         <div class="col-4">
-                            <i class="bi bi-person-badge-fill fs-3 text-primary"></i>
+                            <i class="bi bi-person-badge-fill fs-3 text-indigo-primary"></i>
                             <p class="mb-0 mt-2 small"><strong>Access Control</strong><br>Role-based</p>
                         </div>
                         <div class="col-4">
-                            <i class="bi bi-server fs-3 text-primary"></i>
+                            <i class="bi bi-server fs-3 text-indigo-primary"></i>
                             <p class="mb-0 mt-2 small"><strong>Secure Storage</strong><br>Database</p>
                         </div>
                     </div>
@@ -134,22 +204,22 @@
             </div>
         </div>
 
-        <div class="card shadow-sm mb-4">
+        <div class="card-modern mb-4">
             <div class="card-body p-4">
-                <h4 class="card-title mb-3">
-                    <i class="bi bi-people text-primary me-2"></i>Data Sharing
+                <h4 class="card-title mb-3 font-weight-bold">
+                    <i class="bi bi-people text-indigo-primary me-2"></i>Data Sharing
                 </h4>
-                <p>We do not sell your personal information. We may share data only in these circumstances:</p>
+                <p style="color: #475569; font-weight: 500;">We do not sell your personal information. We may share data only in these circumstances:</p>
                 <ul class="list-group list-group-flush">
-                    <li class="list-group-item">
+                    <li class="list-group-item bg-transparent" style="color: #475569; font-weight: 500;">
                         <i class="bi bi-building me-2 text-info"></i>
                         <strong>Internal Use:</strong> Within the organization for authorized purposes
                     </li>
-                    <li class="list-group-item">
+                    <li class="list-group-item bg-transparent" style="color: #475569; font-weight: 500;">
                         <i class="bi bi-gavel me-2 text-info"></i>
                         <strong>Legal Requirements:</strong> When required by law or to protect rights
                     </li>
-                    <li class="list-group-item">
+                    <li class="list-group-item bg-transparent" style="color: #475569; font-weight: 500;">
                         <i class="bi bi-arrow-repeat me-2 text-info"></i>
                         <strong>Service Providers:</strong> Third parties who assist in operating our services (with confidentiality agreements)
                     </li>
@@ -157,24 +227,24 @@
             </div>
         </div>
 
-        <div class="card shadow-sm mb-4">
+        <div class="card-modern mb-4">
             <div class="card-body p-4">
-                <h4 class="card-title mb-3">
-                    <i class="bi bi-envelope text-primary me-2"></i>Contact Us
+                <h4 class="card-title mb-3 font-weight-bold">
+                    <i class="bi bi-envelope text-indigo-primary me-2"></i>Contact Us
                 </h4>
-                <p>If you have questions about this Privacy Policy or wish to exercise your data rights:</p>
-                <div class="row">
+                <p style="color: #475569; font-weight: 500;">If you have questions about this Privacy Policy or wish to exercise your data rights:</p>
+                <div class="row" style="color: #475569; font-weight: 500; line-height: 1.8;">
                     <div class="col-md-6">
                         <div class="d-flex align-items-center mb-2">
-                            <i class="bi bi-envelope-fill text-primary me-2"></i>
+                            <i class="bi bi-envelope-fill text-indigo-primary me-2"></i>
                             <span>funews@example.edu.vn</span>
                         </div>
                         <div class="d-flex align-items-center mb-2">
-                            <i class="bi bi-telephone-fill text-primary me-2"></i>
+                            <i class="bi bi-telephone-fill text-indigo-primary me-2"></i>
                             <span>+84 123 456 789</span>
                         </div>
                         <div class="d-flex align-items-center">
-                            <i class="bi bi-geo-alt-fill text-primary me-2"></i>
+                            <i class="bi bi-geo-alt-fill text-indigo-primary me-2"></i>
                             <span>FPT University, Can Tho, Vietnam</span>
                         </div>
                     </div>
@@ -183,15 +253,9 @@
         </div>
 
         <div class="text-center mt-5">
-            <a asp-controller="Home" asp-action="Index" class="btn btn-outline-primary">
+            <a asp-controller="Home" asp-action="Index" class="btn btn-outline-primary px-4 py-2 rounded-pill font-weight-bold" style="border-width: 2px;">
                 <i class="bi bi-arrow-left me-2"></i>Back to Home
             </a>
         </div>
     </div>
 </div>
-
-<style>
-    .privacy-hero {
-        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-    }
-</style>

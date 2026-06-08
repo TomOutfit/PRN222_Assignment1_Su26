@@ -28,11 +28,22 @@ namespace NguyenBinhAnMVC.Controllers
         public async Task<IActionResult> Details(string id)
         {
             var newsArticle = await _newsArticleService.GetNewsByIdAsync(id);
-            
+
             if (newsArticle == null || newsArticle.NewsStatus != true)
             {
                 return NotFound();
             }
+
+            if (newsArticle.CategoryID.HasValue)
+            {
+                ViewBag.Category = await _categoryService.GetCategoryByIdAsync(newsArticle.CategoryID.Value);
+            }
+
+            var relatedNews = await _newsArticleService.GetActiveNewsAsync();
+            ViewBag.RelatedNews = relatedNews
+                .Where(n => n.CategoryID == newsArticle.CategoryID && n.NewsArticleID != id)
+                .Take(3)
+                .ToList();
 
             return View(newsArticle);
         }

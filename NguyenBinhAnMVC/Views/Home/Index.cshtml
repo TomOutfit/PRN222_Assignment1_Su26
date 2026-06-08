@@ -1,176 +1,254 @@
-﻿@model IEnumerable<NguyenBinhAn_A01_Data.Models.NewsArticle>
+@model IEnumerable<NguyenBinhAn_A01_Data.Models.NewsArticle>
 @{
     ViewData["Title"] = "News Articles";
 }
 
 <style>
     .hero-section {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        background: var(--theme-public-gradient);
         color: white;
-        padding: 50px 0;
+        padding: 60px 0;
         margin-bottom: 40px;
-        border-radius: 0 0 30px 30px;
+        border-radius: var(--radius-lg);
         position: relative;
         overflow: hidden;
+        box-shadow: 0 10px 30px var(--theme-public-glow);
     }
     
     .hero-section::before {
         content: '';
         position: absolute;
-        top: -50%;
-        right: -10%;
-        width: 400px;
-        height: 400px;
-        background: rgba(255, 255, 255, 0.1);
+        top: -30%;
+        right: -5%;
+        width: 300px;
+        height: 300px;
+        background: rgba(255, 255, 255, 0.08);
         border-radius: 50%;
     }
     
     .hero-section h1 {
-        font-weight: 700;
-        font-size: 2.5rem;
+        font-weight: 800;
+        font-size: 2.6rem;
+        letter-spacing: -0.5px;
     }
     
     .hero-section p {
         opacity: 0.9;
+        font-weight: 500;
     }
     
     .news-card {
-        border: none;
-        border-radius: 16px;
-        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-        transition: all 0.3s ease;
+        border: 1px solid rgba(226, 232, 240, 0.7);
+        background: #ffffff;
+        border-radius: var(--radius-lg);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.02);
+        transition: var(--transition-base);
         overflow: hidden;
         height: 100%;
+        display: flex;
+        flex-direction: column;
     }
     
     .news-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+        transform: translateY(-6px);
+        box-shadow: 0 16px 35px rgba(99, 102, 241, 0.08);
+        border-color: rgba(99, 102, 241, 0.2);
     }
     
     .news-card .card-body {
-        padding: 25px;
+        padding: 30px;
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        justify-content: space-between;
     }
     
     .news-card .category-badge {
         display: inline-block;
-        padding: 5px 12px;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        color: white;
-        border-radius: 20px;
-        font-size: 12px;
-        font-weight: 500;
-        margin-bottom: 12px;
+        padding: 5px 14px;
+        background: rgba(99, 102, 241, 0.08);
+        color: #4f46e5;
+        border-radius: 50px;
+        font-size: 11.5px;
+        font-weight: 700;
+        margin-bottom: 15px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
     }
     
     .news-card .card-title {
-        font-size: 1.25rem;
-        font-weight: 600;
-        color: #1a1a2e;
-        margin-bottom: 10px;
-        line-height: 1.4;
+        font-size: 1.3rem;
+        font-weight: 700;
+        color: #0f172a;
+        margin-bottom: 12px;
+        line-height: 1.45;
+        letter-spacing: -0.25px;
     }
     
     .news-card .card-title a {
         color: inherit;
         text-decoration: none;
-        transition: color 0.3s;
+        transition: var(--transition-base);
     }
     
     .news-card .card-title a:hover {
-        color: #667eea;
+        color: #4f46e5;
     }
     
     .news-card .card-text {
-        color: #666;
+        color: #475569;
         font-size: 0.95rem;
-        line-height: 1.6;
+        line-height: 1.65;
+        font-weight: 500;
+        margin-bottom: 20px;
     }
     
     .news-card .meta-info {
         display: flex;
         align-items: center;
-        gap: 15px;
+        justify-content: space-between;
         font-size: 13px;
-        color: #888;
-        margin-top: 15px;
-        padding-top: 15px;
-        border-top: 1px solid #f0f0f0;
+        color: #64748b;
+        margin-top: auto;
+        padding-top: 20px;
+        border-top: 1px solid var(--border-color);
     }
     
+    .news-card .meta-info span {
+        display: inline-flex;
+        align-items: center;
+        font-weight: 600;
+    }
+
     .news-card .meta-info i {
-        margin-right: 5px;
+        margin-right: 6px;
+        color: #94a3b8;
+    }
+    
+    .news-card .read-btn {
+        border-radius: 50px;
+        font-weight: 700;
+        font-size: 13px;
+        padding: 6px 16px;
+        border: 2px solid #e2e8f0;
+        transition: var(--transition-base);
+        color: #475569;
+        background: transparent;
+    }
+
+    .news-card:hover .read-btn {
+        background: var(--theme-public-gradient);
+        color: white;
+        border-color: transparent;
+        box-shadow: 0 4px 12px var(--theme-public-glow);
     }
     
     .sidebar-card {
-        border: none;
-        border-radius: 16px;
-        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        border: 1px solid rgba(226, 232, 240, 0.7);
+        border-radius: var(--radius-lg);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.02);
         overflow: hidden;
+        background: white;
     }
     
     .sidebar-card .card-header {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        background: var(--theme-public-gradient);
         color: white;
         border: none;
-        padding: 18px 20px;
-        font-weight: 600;
+        padding: 20px 24px;
+        font-weight: 700;
+        font-size: 1.05rem;
+        display: flex;
+        align-items: center;
     }
     
     .sidebar-card .list-group-item {
         border: none;
-        padding: 12px 20px;
-        transition: all 0.3s;
+        border-bottom: 1px solid var(--border-color);
+        padding: 14px 24px;
+        transition: var(--transition-base);
+        color: #475569;
+        font-weight: 600;
+    }
+
+    .sidebar-card .list-group-item:last-child {
+        border-bottom: none;
     }
     
     .sidebar-card .list-group-item:hover {
-        background: #f8f9fa;
-        color: #667eea;
+        background: #f8fafc;
+        color: #4f46e5;
     }
     
     .sidebar-card .list-group-item a {
         color: inherit;
         text-decoration: none;
+        display: flex;
+        width: 100%;
     }
     
     .search-form .form-control {
         border-radius: 12px;
-        padding: 12px 16px;
-        border: 2px solid #e8e8e8;
-        transition: all 0.3s;
+        padding: 12px 18px;
+        border: 2.5px solid #e2e8f0;
+        transition: var(--transition-base);
+        font-weight: 500;
     }
     
     .search-form .form-control:focus {
-        border-color: #667eea;
-        box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+        border-color: #6366f1;
+        box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.12);
     }
     
-    .search-form .btn {
+    .search-form .btn-search {
         border-radius: 12px;
         padding: 12px 20px;
+        background: var(--theme-public-gradient);
+        color: white;
+        border: none;
+        font-weight: 700;
+        box-shadow: 0 4px 12px var(--theme-public-glow);
+        transition: var(--transition-base);
+    }
+
+    .search-form .btn-search:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 6px 18px var(--theme-public-glow);
     }
     
     .empty-state {
         text-align: center;
-        padding: 60px 20px;
-        color: #888;
+        padding: 80px 20px;
+        color: #64748b;
     }
     
     .empty-state i {
-        font-size: 60px;
-        margin-bottom: 20px;
-        opacity: 0.3;
+        font-size: 70px;
+        margin-bottom: 24px;
+        opacity: 0.4;
+        color: #6366f1;
     }
     
     .breadcrumb-custom {
         background: transparent;
         padding: 0;
-        margin-bottom: 20px;
+        margin-bottom: 25px;
     }
     
     .breadcrumb-custom .breadcrumb-item a {
-        color: #667eea;
+        color: #4f46e5;
         text-decoration: none;
+        font-weight: 600;
+        transition: var(--transition-base);
+    }
+
+    .breadcrumb-custom .breadcrumb-item a:hover {
+        color: #6366f1;
+    }
+
+    .breadcrumb-custom .breadcrumb-item.active {
+        font-weight: 600;
+        color: #64748b;
     }
 </style>
 
@@ -262,7 +340,7 @@
                                 
                                 <div class="meta-info">
                                     <span><i class="bi bi-calendar3"></i>@(news.CreatedDate?.ToString("MMM dd, yyyy") ?? "N/A")</span>
-                                    <a asp-action="Details" asp-route-id="@news.NewsArticleID" class="btn btn-sm btn-outline-primary">
+                                    <a asp-action="Details" asp-route-id="@news.NewsArticleID" class="read-btn">
                                         Read More <i class="bi bi-arrow-right ms-1"></i>
                                     </a>
                                 </div>
@@ -311,13 +389,13 @@
                     <div class="input-group">
                         <input type="text" name="searchTerm" class="form-control" 
                                placeholder="Search news..." value="@ViewBag.SearchTerm" />
-                        <button type="submit" class="btn btn-primary">
+                        <button type="submit" class="btn-search">
                             <i class="bi bi-search"></i>
                         </button>
                     </div>
                     @if (!string.IsNullOrEmpty(ViewBag.SearchTerm))
                     {
-                        <a asp-action="Index" class="btn btn-outline-secondary w-100 mt-2">
+                        <a asp-action="Index" class="btn btn-outline-secondary w-100 mt-2 rounded-pill font-weight-bold">
                             <i class="bi bi-x-circle me-2"></i>Clear Search
                         </a>
                     }
