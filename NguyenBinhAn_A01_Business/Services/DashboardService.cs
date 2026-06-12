@@ -20,7 +20,7 @@ namespace NguyenBinhAn_A01_Business.Services
                 .Select(g => new { Role = g.Key, Count = g.Count() })
                 .ToListAsync();
 
-            var roleNames = new Dictionary<int?, string>
+            var roleNames = new Dictionary<int, string>
             {
                 { 0, "Admin" },
                 { 1, "Staff" },
@@ -28,7 +28,7 @@ namespace NguyenBinhAn_A01_Business.Services
             };
 
             return data.ToDictionary(
-                x => roleNames.TryGetValue(x.Role, out var name) ? name : $"Role {x.Role}",
+                x => x.Role.HasValue && roleNames.TryGetValue(x.Role.Value, out var name) ? name : $"Role {x.Role}",
                 x => x.Count);
         }
 
@@ -37,7 +37,7 @@ namespace NguyenBinhAn_A01_Business.Services
             var cutoff = DateTime.Now.AddMonths(-monthsBack + 1).Date.AddDays(1 - DateTime.Now.Day);
             var data = await _context.NewsArticles
                 .Where(n => n.CreatedDate.HasValue && n.CreatedDate >= cutoff)
-                .GroupBy(n => new { n.CreatedDate.Value.Year, n.CreatedDate.Value.Month })
+                .GroupBy(n => new { Year = n.CreatedDate!.Value.Year, Month = n.CreatedDate!.Value.Month })
                 .Select(g => new { g.Key.Year, g.Key.Month, Count = g.Count() })
                 .OrderBy(g => g.Year).ThenBy(g => g.Month)
                 .ToListAsync();
