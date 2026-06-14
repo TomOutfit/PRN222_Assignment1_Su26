@@ -16,13 +16,26 @@ namespace NguyenBinhAnMVC.Controllers
             _categoryService = categoryService;
         }
 
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(int page = 1)
         {
-            var newsArticles = await _newsArticleService.GetActiveNewsAsync();
+            const int pageSize = 4;
+            if (page < 1) page = 1;
+
+            var newsArticles = (await _newsArticleService.GetActiveNewsAsync()).ToList();
             var categories = await _categoryService.GetActiveCategoriesAsync();
+
+            var paginatedNews = newsArticles
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .ToList();
             
             ViewBag.Categories = categories;
-            return View(newsArticles);
+            ViewBag.CurrentPage = page;
+            ViewBag.TotalPages = (int)Math.Ceiling(newsArticles.Count / (double)pageSize);
+            ViewBag.TotalItems = newsArticles.Count;
+            ViewBag.PageSize = pageSize;
+
+            return View(paginatedNews);
         }
 
         public async Task<IActionResult> Details(string id)
@@ -48,7 +61,7 @@ namespace NguyenBinhAnMVC.Controllers
             return View(newsArticle);
         }
 
-        public async Task<IActionResult> Category(short id)
+        public async Task<IActionResult> Category(short id, int page = 1)
         {
             var category = await _categoryService.GetCategoryByIdAsync(id);
             if (category == null || category.IsActive != true)
@@ -56,25 +69,53 @@ namespace NguyenBinhAnMVC.Controllers
                 return NotFound();
             }
 
-            var newsArticles = await _newsArticleService.GetNewsByCategoryAsync(id);
+            const int pageSize = 4;
+            if (page < 1) page = 1;
+
+            var newsArticles = (await _newsArticleService.GetNewsByCategoryAsync(id)).ToList();
+            var categories = await _categoryService.GetActiveCategoriesAsync();
+
+            var paginatedNews = newsArticles
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .ToList();
+
             ViewBag.Category = category;
-            ViewBag.Categories = await _categoryService.GetActiveCategoriesAsync();
+            ViewBag.Categories = categories;
+            ViewBag.CurrentPage = page;
+            ViewBag.TotalPages = (int)Math.Ceiling(newsArticles.Count / (double)pageSize);
+            ViewBag.TotalItems = newsArticles.Count;
+            ViewBag.PageSize = pageSize;
             
-            return View("Index", newsArticles);
+            return View("Index", paginatedNews);
         }
 
-        public async Task<IActionResult> Search(string searchTerm)
+        public async Task<IActionResult> Search(string searchTerm, int page = 1)
         {
             if (string.IsNullOrWhiteSpace(searchTerm))
             {
                 return RedirectToAction(nameof(Index));
             }
 
-            var newsArticles = await _newsArticleService.SearchNewsAsync(searchTerm);
-            ViewBag.Categories = await _categoryService.GetActiveCategoriesAsync();
+            const int pageSize = 4;
+            if (page < 1) page = 1;
+
+            var newsArticles = (await _newsArticleService.SearchNewsAsync(searchTerm)).ToList();
+            var categories = await _categoryService.GetActiveCategoriesAsync();
+
+            var paginatedNews = newsArticles
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .ToList();
+
+            ViewBag.Categories = categories;
             ViewBag.SearchTerm = searchTerm;
+            ViewBag.CurrentPage = page;
+            ViewBag.TotalPages = (int)Math.Ceiling(newsArticles.Count / (double)pageSize);
+            ViewBag.TotalItems = newsArticles.Count;
+            ViewBag.PageSize = pageSize;
             
-            return View("Index", newsArticles);
+            return View("Index", paginatedNews);
         }
 
         public IActionResult Privacy()
