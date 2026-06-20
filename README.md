@@ -1,215 +1,152 @@
-# FUNews Management System
+# 📰 FUNews Management System
 
-A comprehensive News Management System built with ASP.NET Core MVC following 3-Layer architecture, Repository pattern, and Entity Framework Core.
+A state-of-the-art academic community content management portal built on **ASP.NET Core MVC (.NET 10)** following the **3-Layer Architecture** and **Repository Pattern**. Designed for academic campuses to create, categorize, tag, and publish news articles with role-based dashboard controls, advanced visual reports, and multi-format exports.
 
-## Features
+---
 
-### Core Functionality
-- **News Management**: Create, read, update, and delete news articles
-- **Category Management**: Organize news into hierarchical categories
-- **Account Management**: User authentication and role-based access control
-- **Search Functionality**: Search news articles by title, content, and headline
-- **Reporting**: Generate statistics reports for admin users
+## 🏆 Key Features
 
-### User Roles
-- **Anonymous Users**: View active news articles
-- **Lecturers (Role 2)**: View active news articles
-- **Staff (Role 1)**: Manage categories, news articles, and profile
-- **Admin (Role 0)**: Manage accounts and generate reports
+### 👥 Role-Based Access Control (RBAC)
+The portal supports three distinct authenticated roles in addition to public guest access:
 
-## Architecture
+1. **Anonymous / Public Guest**
+   * Browse active news articles in chronological order.
+   * Search news articles by title, headline, or content keywords.
+   * Filter articles by category tree selection.
+   * Read full details of news articles.
+2. **Lecturer (Role 2)**
+   * All public guest capabilities.
+   * Profile workspace (customized boards).
+3. **Staff (Role 1)**
+   * **Dashboard**: Key operational insights.
+   * **News Article Management**: Rich CRUD actions on articles, including category selection and tag assignments.
+   * **Category Tree Management**: View and construct nested parent-child categories.
+   * **Profile Management**: Update personal info and securely change credentials.
+4. **Admin (Role 0)**
+   * **Dashboard**: Full administrative panel.
+   * **Account Control List (ACL)**: Comprehensive CRUD actions on Lecturers and Staff accounts.
+   * **Statistical Reporting Engine**: Date-range filtered statistics on article publishing.
 
-### 3-Layer Architecture
-- **Presentation Layer**: MVC Controllers and Views
-- **Business Layer**: Services and Repositories
-- **Data Layer**: Entity Framework Models and DbContext
+---
 
-### Design Patterns
-- **Repository Pattern**: For data access abstraction
-- **Singleton Pattern**: For service management
-- **Dependency Injection**: For loose coupling
+## 📊 Premium Visualization & Reporting Engine
 
-## Database Design
+The Admin statistics panel features an interactive visual reporting dashboard powered by **Chart.js**:
 
-### Entities
-- **SystemAccount**: User accounts with roles
-- **NewsArticle**: News articles with content and metadata
-- **Category**: Hierarchical categories for news organization
-- **Tag**: Tags for news categorization
-- **NewsTag**: Many-to-many relationship between news and tags
+* **4 Analytical Charts**:
+  * 🏷️ **Articles by Category**: Category-wise contribution.
+  * 🔘 **Status Distribution**: Active vs. Inactive articles.
+  * 📈 **Articles Creation Trend**: Timeline trend chart.
+  * 👥 **Articles by Author**: Staff publishing velocity.
+* **Interactive Chart Type Switcher**: Toggle dynamically between `Bar` vs. `Pie`, `Doughnut` vs. `Pie`, `Line` vs. `Bar`, and `Bar` vs. `Polar` types.
+* **Fluid Size Expansion (Grid Toggles)**: Each chart card features a resize button that dynamically expands the layout width from half-width (`col-lg-6`) to full-width (`col-lg-12`) with smooth cubic-bezier transitions, adjusting the canvas height from `400px` to `550px`.
+* **Optimized Legends**: Automated legend positioning (placed on the `right` for pie/doughnut layouts) to prevent vertical squeezing on various screen sizes.
 
-## Setup Instructions
+### 📥 Multi-Format Exports
+* **PDF Export**: Generates a high-quality, landscape A4 PDF of the interactive dashboard charts and data table using `html2pdf.js` (rendered client-side).
+* **Excel Export**: Server-side Excel worksheet generation using **EPPlus** with auto-fitted columns, bold green header styling, and metadata attributes.
+* **JSON Export**: Dumps raw structured data with indentations for easy API compatibility.
+
+---
+
+## 🏗️ Architecture Design
+
+The system is split into three clean layers to isolate concerns, facilitate testing, and enable loose coupling:
+
+```
+[ NguyenBinhAnMVC ] <--- Presentation (Controllers, Views, Session, Styles)
+       │
+       ▼
+[ NguyenBinhAn_A01_Business ] <--- Business Logic (Services, Repository Interfaces)
+       │
+       ▼
+[ NguyenBinhAn_A01_Data ] <--- Data Access (DbContext, EF Models, Repositories)
+```
+
+### 1. Presentation Layer (`NguyenBinhAnMVC`)
+* **Controllers**: Routes HTTP requests and interacts with BLL Services.
+* **Views**: Dynamic Razor pages styled with responsive CSS grid systems, modern gradients, glassmorphism UI cards, and Bootstrap 5.
+* **Authentication Filters**: Session-based authorization checking (`UserRole` and `UserEmail`) stored in `HttpContext.Session`.
+
+### 2. Business Logic Layer (`NguyenBinhAn_A01_Business`)
+* Contains interfaces and service classes implementing business rules, constraints, and transactions.
+* Key Services:
+  * `AuthService`: Authentication validation.
+  * `CategoryService`: Hierarchy maintenance and deletion guards.
+  * `NewsArticleService`: Query filters, tag handling, and history.
+  * `SystemAccountService`: Password hashing validation and profile updating.
+  * `DashboardService`: Aggregates cross-model statistics for dashboards.
+
+### 3. Data Access Layer (`NguyenBinhAn_A01_Data`)
+* **Models**: Entity models mapping to tables: `SystemAccount`, `NewsArticle`, `Category`, `Tag`, `NewsTag`.
+* **DbContext**: `FUNewsManagementContext` configuring relationships (e.g., many-to-many tag associations) and constraints.
+* **Repositories**: Abstract CRUD operations using Entity Framework Core.
+
+---
+
+## 🗄️ Database Design
+
+The schema models an academic news directory:
+
+* **SystemAccount**: Stores details of users (Admin, Staff, Lecturer).
+* **NewsArticle**: News content, status (Active/Inactive), dates, category references, and creator IDs.
+* **Category**: Self-referencing parent-child structure (`ParentCategoryID`) to support nesting.
+* **Tag**: Tags for articles.
+* **NewsTag**: Join table matching `NewsArticle` to `Tag` (many-to-many).
+
+---
+
+## 🛠️ Installation & Setup
 
 ### Prerequisites
-- .NET 10.0 SDK
-- SQL Server 2012 or later
-- Visual Studio 2019 or later
+* **.NET 10.0 SDK** or later
+* **SQL Server** (LocalDB or Express edition)
+* **Visual Studio 2022** / **VS Code**
 
-### Database Setup
-1. Create a SQL Server database named `FUNewsManagement`
-2. Run the provided `FUNewsManagement.sql` script to create tables and seed initial data
+### Step 1: Database Setup
+1. Create a database in SQL Server called `FUNewsManagement`.
+2. Open and execute the database script file (`FUNewsManagement.sql` / `FUNewsManagement_V2.sql` in the workspace root) in your SQL query engine to set up the schema and seed initial data.
 
-### Application Configuration
-1. Update the connection string in `appsettings.json`:
+### Step 2: Configuration
+Update the connection string in `NguyenBinhAnMVC/appsettings.json`:
 ```json
 {
   "ConnectionStrings": {
-    "DefaultConnection": "Server=YOUR_SERVER;Database=FUNewsManagement;Trusted_Connection=True;MultipleActiveResultSets=true"
+    "DefaultConnection": "Server=YOUR_SERVER_NAME;Database=FUNewsManagement;Trusted_Connection=True;TrustServerCertificate=True;MultipleActiveResultSets=true"
   }
 }
 ```
 
-### Running the Application
-1. Open the solution in Visual Studio
-2. Restore NuGet packages
-3. Set `NguyenBinhAnMVC` as the startup project
-4. Press F5 or click "Start Debugging"
+### Step 3: Run the Application
+From your CLI, navigate to the presentation folder and run the app:
+```powershell
+cd NguyenBinhAnMVC
+dotnet restore
+dotnet build
+dotnet run
+```
+Access the application on the local ports (e.g., `http://localhost:5000` or `https://localhost:5001`).
 
-## Default Accounts
+---
 
-### Admin Account
-- **Email**: admin@FUNewsManagementSystem.org
-- **Password**: @@abc123@@
+## 🔑 Default Credentials
 
-## Testing Guide
+Use these seeded credentials to test respective roles:
 
-### Authentication Testing
-1. Navigate to the application (defaults to Login page)
-2. Test login with default admin credentials
-3. Verify role-based navigation menu
-4. Test logout functionality
+| Role | Email | Password | Role Value |
+| :--- | :--- | :--- | :--- |
+| **Admin** | `admin@FUNewsManagementSystem.org` | `@@abc123@@` | `0` |
+| **Staff** | *(Check seed data in SQL script)* | *(Check seed data)* | `1` |
+| **Lecturer**| *(Check seed data)* | *(Check seed data)* | `2` |
 
-### Admin Functionality Testing
-1. **Account Management**:
-   - Create new Staff and Lecturer accounts
-   - Edit existing account information
-   - Delete accounts (with confirmation)
-   - Search accounts by name or email
+---
 
-2. **Reports**:
-   - Generate news statistics by date range
-   - Verify report data accuracy
+## 🛡️ Key Implementation Safeguards
 
-### Staff Functionality Testing
-1. **Category Management**:
-   - Create new categories (including sub-categories)
-   - Edit category information
-   - Delete categories (only if not associated with news)
-   - Search categories
-
-2. **News Management**:
-   - Create news articles with tags
-   - Edit existing articles
-   - Delete articles (with confirmation)
-   - Search news articles
-   - View news history
-
-3. **Profile Management**:
-   - Update personal information
-   - Change password
-
-### Lecturer Functionality Testing
-1. View active news articles
-2. Search news articles
-3. Filter by category
-
-### Public Access Testing
-1. Browse news articles without authentication
-2. Search and filter functionality
-3. View news details
-
-## Validation Rules
-
-### News Articles
-- Title: Required, minimum 5 characters
-- Content: Required, minimum 20 characters
-- Category: Required selection
-- Status: Active/Inactive toggle
-
-### Categories
-- Name: Required, minimum 2 characters
-- Description: Optional
-- Parent Category: Optional (supports hierarchy)
-
-### Accounts
-- Name: Required, minimum 3 characters
-- Email: Required, valid email format
-- Password: Required, minimum 6 characters (for new accounts)
-- Role: Required selection
-
-## Security Features
-
-### Authentication
-- Session-based authentication
-- Role-based access control
-- Automatic logout on session timeout
-
-### Authorization
-- Controller-level role validation
-- Action-level permission checks
-- Secure password handling
-
-## Error Handling
-
-### User-Friendly Messages
-- Validation error messages
-- Confirmation dialogs for destructive actions
-- Access denied pages for unauthorized access
-
-### Data Integrity
-- Prevent deletion of categories with associated news
-- Cascade handling for news-tag relationships
-- Transaction management for data consistency
-
-## Performance Considerations
-
-### Database Optimization
-- Efficient LINQ queries
-- Proper indexing strategies
-- Connection pooling
-
-### Caching
-- Session management
-- Static asset optimization
-- Response caching where appropriate
-
-## Deployment Notes
-
-### Production Configuration
-1. Update connection strings for production database
-2. Configure proper logging levels
-3. Set up HTTPS and security headers
-4. Configure session timeout appropriately
-
-### Monitoring
-- Application logging
-- Error tracking
-- Performance monitoring
-
-## Troubleshooting
-
-### Common Issues
-1. **Database Connection**: Verify connection string and SQL Server accessibility
-2. **Authentication**: Check session configuration and cookie settings
-3. **Permissions**: Ensure proper role assignments in database
-4. **Validation**: Review client-side and server-side validation rules
-
-### Debug Mode
-- Enable detailed error messages in development
-- Use browser developer tools for client-side issues
-- Check Visual Studio output for server-side errors
-
-## Future Enhancements
-
-### Planned Features
-- File upload support for news images
-- Email notifications for news updates
-- Advanced reporting and analytics
-- API endpoints for mobile applications
-- Multi-language support
-
-### Technical Improvements
-- Unit and integration tests
-- API documentation
-- Performance optimization
-- Security hardening
+1. **Delete Protection**:
+   * Wrap deletion actions in the Controllers/Services with strict database validation.
+   * If a **Category** contains news articles or a **System Account** authored articles, deletion is blocked, returning a clear validation message to the user rather than causing a database exception.
+2. **Session Filters**:
+   * Protected actions inherit from `BaseController` or contain role checks (`RequireAdminRole`, `RequireStaffRole`) preventing unauthorized cross-route URL requests.
+3. **Null-Safety in Reports**:
+   * LINQ queries use the null-forgiving operator (`!`) and `GetValueOrDefault()` to prevent `CS8629` compile warnings on nullable database properties.
