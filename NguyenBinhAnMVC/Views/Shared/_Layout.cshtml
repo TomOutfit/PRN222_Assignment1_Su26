@@ -148,16 +148,19 @@
             transform: translateX(4px);
         }
         
-        .footer-modern .footer-links a i {
+        .footer-modern .footer-links a i,
+        .footer-modern .footer-links li i {
             color: #6366f1;
             transition: var(--transition-base);
         }
 
-        .theme-admin .footer-modern .footer-links a i {
+        .theme-admin .footer-modern .footer-links a i,
+        .theme-admin .footer-modern .footer-links li i {
             color: #f43f5e;
         }
 
-        .theme-staff .footer-modern .footer-links a i {
+        .theme-staff .footer-modern .footer-links a i,
+        .theme-staff .footer-modern .footer-links li i {
             color: #10b981;
         }
         
@@ -382,24 +385,79 @@
                     <ul class="footer-links">
                         <li><a asp-controller="Home" asp-action="Index"><i class="bi bi-chevron-right"></i>Home</a></li>
                         <li><a asp-controller="Home" asp-action="Privacy"><i class="bi bi-chevron-right"></i>Privacy Policy</a></li>
-                        <li><a asp-controller="Auth" asp-action="Login"><i class="bi bi-chevron-right"></i>Portal Login</a></li>
+                        @if (string.IsNullOrEmpty(userEmail))
+                        {
+                            <li><a asp-controller="Auth" asp-action="Login"><i class="bi bi-chevron-right"></i>Portal Login</a></li>
+                        }
+                        else
+                        {
+                            if (userRole == 0)
+                            {
+                                <li><a asp-controller="Admin" asp-action="Dashboard"><i class="bi bi-chevron-right"></i>Admin Dashboard</a></li>
+                            }
+                            else if (userRole == 1)
+                            {
+                                <li><a asp-controller="Staff" asp-action="Dashboard"><i class="bi bi-chevron-right"></i>Staff Dashboard</a></li>
+                            }
+                            else if (userRole == 2)
+                            {
+                                <li><a asp-controller="Lecturer" asp-action="Index"><i class="bi bi-chevron-right"></i>Lecturer Board</a></li>
+                            }
+                        }
                     </ul>
                 </div>
                 <div class="col-lg-3 col-md-4 col-6">
                     <h6 class="footer-section-title">Key Core Modules</h6>
                     <ul class="footer-links">
-                        <li><a href="#"><i class="bi bi-chevron-right"></i>News Publisher</a></li>
-                        <li><a href="#"><i class="bi bi-chevron-right"></i>Category Tree System</a></li>
-                        <li><a href="#"><i class="bi bi-chevron-right"></i>Account Control List</a></li>
-                        <li><a href="#"><i class="bi bi-chevron-right"></i>Statistical Reporting</a></li>
+                        @if (string.IsNullOrEmpty(userEmail))
+                        {
+                            <li><a asp-controller="Auth" asp-action="Login"><i class="bi bi-chevron-right"></i>News Publisher</a></li>
+                            <li><a asp-controller="Auth" asp-action="Login"><i class="bi bi-chevron-right"></i>Category Tree System</a></li>
+                            <li><a asp-controller="Auth" asp-action="Login"><i class="bi bi-chevron-right"></i>Account Control List</a></li>
+                            <li><a asp-controller="Auth" asp-action="Login"><i class="bi bi-chevron-right"></i>Statistical Reporting</a></li>
+                        }
+                        else
+                        {
+                            if (userRole == 0) // Admin
+                            {
+                                <li><a asp-controller="Admin" asp-action="Dashboard"><i class="bi bi-chevron-right"></i>News Publisher</a></li>
+                                <li><a asp-controller="Admin" asp-action="Dashboard"><i class="bi bi-chevron-right"></i>Category Tree System</a></li>
+                                <li><a asp-controller="Admin" asp-action="Accounts"><i class="bi bi-chevron-right"></i>Account Control List</a></li>
+                                <li><a asp-controller="Admin" asp-action="Reports"><i class="bi bi-chevron-right"></i>Statistical Reporting</a></li>
+                            }
+                            else if (userRole == 1) // Staff
+                            {
+                                <li><a asp-controller="Staff" asp-action="News"><i class="bi bi-chevron-right"></i>News Publisher</a></li>
+                                <li><a asp-controller="Staff" asp-action="Categories"><i class="bi bi-chevron-right"></i>Category Tree System</a></li>
+                                <li><a asp-controller="Staff" asp-action="Dashboard"><i class="bi bi-chevron-right"></i>Account Control List</a></li>
+                                <li><a asp-controller="Staff" asp-action="Dashboard"><i class="bi bi-chevron-right"></i>Statistical Reporting</a></li>
+                            }
+                            else // Lecturer
+                            {
+                                <li><a asp-controller="Lecturer" asp-action="Index"><i class="bi bi-chevron-right"></i>News Publisher</a></li>
+                                <li><a asp-controller="Home" asp-action="Index"><i class="bi bi-chevron-right"></i>Category Tree System</a></li>
+                                <li><a asp-controller="Home" asp-action="Index"><i class="bi bi-chevron-right"></i>Account Control List</a></li>
+                                <li><a asp-controller="Home" asp-action="Index"><i class="bi bi-chevron-right"></i>Statistical Reporting</a></li>
+                            }
+                        }
                     </ul>
                 </div>
                 <div class="col-lg-3 col-md-4">
                     <h6 class="footer-section-title">Office & Contacts</h6>
                     <ul class="footer-links">
-                        <li><span><i class="bi bi-geo-alt me-2"></i>Can Tho Campus, FPT</span></li>
-                        <li><span><i class="bi bi-envelope me-2"></i>funews@fpt.edu.vn</span></li>
-                        <li><span><i class="bi bi-telephone me-2"></i>+84 292 730 3636</span></li>
+                        <li class="d-flex align-items-center" style="font-size: 0.95rem; color: #94a3b8; margin-bottom: 12px;">
+                            <i class="bi bi-geo-alt me-2" style="font-size: 0.95rem;"></i>Quy Nhon Campus, FPT
+                        </li>
+                        <li>
+                            <a href="mailto:funews@fpt.edu.vn">
+                                <i class="bi bi-envelope"></i>funews@fpt.edu.vn
+                            </a>
+                        </li>
+                        <li>
+                            <a href="tel:+842927303636">
+                                <i class="bi bi-telephone"></i>+84 292 730 3636
+                            </a>
+                        </li>
                     </ul>
                 </div>
             </div>

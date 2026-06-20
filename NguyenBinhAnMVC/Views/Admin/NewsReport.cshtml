@@ -38,7 +38,7 @@
     // 4. Articles Trend Over Time
     var timeDataPoints = Model
         .Where(n => n.CreatedDate.HasValue)
-        .GroupBy(n => n.CreatedDate.Value.Date)
+        .GroupBy(n => n.CreatedDate!.Value.Date)
         .Select(g => new {
             Date = g.Key.ToString("yyyy-MM-dd"),
             Count = g.Count()
