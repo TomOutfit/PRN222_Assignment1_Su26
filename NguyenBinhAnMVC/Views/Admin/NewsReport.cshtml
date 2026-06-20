@@ -148,6 +148,21 @@
     .table-modern td a:hover {
         color: #dc2626;
     }
+    
+    .transition-all {
+        transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    }
+    
+    .btn-expand-card {
+        border-color: #e2e8f0 !important;
+        color: #64748b !important;
+    }
+    
+    .btn-expand-card:hover {
+        background-color: #f1f5f9 !important;
+        color: #0f172a !important;
+        border-color: #cbd5e1 !important;
+    }
 </style>
 
 <div class="row">
@@ -227,64 +242,84 @@
                 <!-- Charts Dashboard Section -->
                 <div class="row mb-4">
                     <!-- Chart 1: Category Distribution -->
-                    <div class="col-md-6 mb-4">
+                    <div id="card-col-categoryChart" class="col-lg-6 mb-4 transition-all">
                         <div class="card-modern h-100 shadow-sm border-0">
                             <div class="card-header-modern bg-white border-0 pt-4 px-4 d-flex justify-content-between align-items-center">
                                 <h5 class="card-title mb-0" style="font-weight: 700; color: #1e293b;"><i class="bi bi-tag-fill me-2 text-danger"></i>Articles by Category</h5>
-                                <div class="btn-group btn-group-sm" role="group">
-                                    <button type="button" class="btn btn-outline-danger btn-sm active" onclick="changeChartType('categoryChart', 'bar')">Bar</button>
-                                    <button type="button" class="btn btn-outline-danger btn-sm" onclick="changeChartType('categoryChart', 'pie')">Pie</button>
+                                <div class="d-flex align-items-center gap-2">
+                                    <div class="btn-group btn-group-sm" role="group">
+                                        <button type="button" class="btn btn-outline-danger btn-sm active" onclick="changeChartType('categoryChart', 'bar')">Bar</button>
+                                        <button type="button" class="btn btn-outline-danger btn-sm" onclick="changeChartType('categoryChart', 'pie')">Pie</button>
+                                    </div>
+                                    <button type="button" class="btn btn-outline-secondary btn-sm btn-expand-card" onclick="toggleCardExpand('card-col-categoryChart', 'categoryChart')" title="Expand Chart">
+                                        <i class="bi bi-arrows-angle-expand"></i>
+                                    </button>
                                 </div>
                             </div>
-                            <div class="card-body p-4" style="min-height: 320px; position: relative;">
+                            <div class="card-body p-4" style="height: 400px; position: relative; transition: height 0.3s ease-in-out;">
                                 <canvas id="categoryChart"></canvas>
                             </div>
                         </div>
                     </div>
 
                     <!-- Chart 2: Active vs Inactive -->
-                    <div class="col-md-6 mb-4">
+                    <div id="card-col-statusChart" class="col-lg-6 mb-4 transition-all">
                         <div class="card-modern h-100 shadow-sm border-0">
                             <div class="card-header-modern bg-white border-0 pt-4 px-4 d-flex justify-content-between align-items-center">
                                 <h5 class="card-title mb-0" style="font-weight: 700; color: #1e293b;"><i class="bi bi-toggle2-on me-2 text-danger"></i>Status Distribution</h5>
-                                <div class="btn-group btn-group-sm" role="group">
-                                    <button type="button" class="btn btn-outline-danger btn-sm active" onclick="changeChartType('statusChart', 'doughnut')">Doughnut</button>
-                                    <button type="button" class="btn btn-outline-danger btn-sm" onclick="changeChartType('statusChart', 'pie')">Pie</button>
+                                <div class="d-flex align-items-center gap-2">
+                                    <div class="btn-group btn-group-sm" role="group">
+                                        <button type="button" class="btn btn-outline-danger btn-sm active" onclick="changeChartType('statusChart', 'doughnut')">Doughnut</button>
+                                        <button type="button" class="btn btn-outline-danger btn-sm" onclick="changeChartType('statusChart', 'pie')">Pie</button>
+                                    </div>
+                                    <button type="button" class="btn btn-outline-secondary btn-sm btn-expand-card" onclick="toggleCardExpand('card-col-statusChart', 'statusChart')" title="Expand Chart">
+                                        <i class="bi bi-arrows-angle-expand"></i>
+                                    </button>
                                 </div>
                             </div>
-                            <div class="card-body p-4" style="min-height: 320px; position: relative;">
+                            <div class="card-body p-4" style="height: 400px; position: relative; transition: height 0.3s ease-in-out;">
                                 <canvas id="statusChart"></canvas>
                             </div>
                         </div>
                     </div>
 
                     <!-- Chart 3: Trend Over Time -->
-                    <div class="col-md-6 mb-4">
+                    <div id="card-col-trendChart" class="col-lg-6 mb-4 transition-all">
                         <div class="card-modern h-100 shadow-sm border-0">
                             <div class="card-header-modern bg-white border-0 pt-4 px-4 d-flex justify-content-between align-items-center">
                                 <h5 class="card-title mb-0" style="font-weight: 700; color: #1e293b;"><i class="bi bi-graph-up me-2 text-danger"></i>Articles Creation Trend</h5>
-                                <div class="btn-group btn-group-sm" role="group">
-                                    <button type="button" class="btn btn-outline-danger btn-sm active" onclick="changeChartType('trendChart', 'line')">Line</button>
-                                    <button type="button" class="btn btn-outline-danger btn-sm" onclick="changeChartType('trendChart', 'bar')">Bar</button>
+                                <div class="d-flex align-items-center gap-2">
+                                    <div class="btn-group btn-group-sm" role="group">
+                                        <button type="button" class="btn btn-outline-danger btn-sm active" onclick="changeChartType('trendChart', 'line')">Line</button>
+                                        <button type="button" class="btn btn-outline-danger btn-sm" onclick="changeChartType('trendChart', 'bar')">Bar</button>
+                                    </div>
+                                    <button type="button" class="btn btn-outline-secondary btn-sm btn-expand-card" onclick="toggleCardExpand('card-col-trendChart', 'trendChart')" title="Expand Chart">
+                                        <i class="bi bi-arrows-angle-expand"></i>
+                                    </button>
                                 </div>
                             </div>
-                            <div class="card-body p-4" style="min-height: 320px; position: relative;">
+                            <div class="card-body p-4" style="height: 400px; position: relative; transition: height 0.3s ease-in-out;">
                                 <canvas id="trendChart"></canvas>
                             </div>
                         </div>
                     </div>
 
                     <!-- Chart 4: Author Distribution -->
-                    <div class="col-md-6 mb-4">
+                    <div id="card-col-authorChart" class="col-lg-6 mb-4 transition-all">
                         <div class="card-modern h-100 shadow-sm border-0">
                             <div class="card-header-modern bg-white border-0 pt-4 px-4 d-flex justify-content-between align-items-center">
                                 <h5 class="card-title mb-0" style="font-weight: 700; color: #1e293b;"><i class="bi bi-people-fill me-2 text-danger"></i>Articles by Author</h5>
-                                <div class="btn-group btn-group-sm" role="group">
-                                    <button type="button" class="btn btn-outline-danger btn-sm active" onclick="changeChartType('authorChart', 'bar')">Bar</button>
-                                    <button type="button" class="btn btn-outline-danger btn-sm" onclick="changeChartType('authorChart', 'polarArea')">Polar</button>
+                                <div class="d-flex align-items-center gap-2">
+                                    <div class="btn-group btn-group-sm" role="group">
+                                        <button type="button" class="btn btn-outline-danger btn-sm active" onclick="changeChartType('authorChart', 'bar')">Bar</button>
+                                        <button type="button" class="btn btn-outline-danger btn-sm" onclick="changeChartType('authorChart', 'polarArea')">Polar</button>
+                                    </div>
+                                    <button type="button" class="btn btn-outline-secondary btn-sm btn-expand-card" onclick="toggleCardExpand('card-col-authorChart', 'authorChart')" title="Expand Chart">
+                                        <i class="bi bi-arrows-angle-expand"></i>
+                                    </button>
                                 </div>
                             </div>
-                            <div class="card-body p-4" style="min-height: 320px; position: relative;">
+                            <div class="card-body p-4" style="height: 400px; position: relative; transition: height 0.3s ease-in-out;">
                                 <canvas id="authorChart"></canvas>
                             </div>
                         </div>
@@ -456,6 +491,10 @@
             if (chartId === 'statusChart' && chartType === 'doughnut') {
                 baseOptions.cutout = '60%';
             }
+            // Put legend on the right side for pie/doughnut charts with many categories/authors to avoid squeezing
+            if (chartId === 'categoryChart' || chartId === 'authorChart') {
+                baseOptions.plugins.legend.position = 'right';
+            }
             return baseOptions;
         } else {
             return {
@@ -593,6 +632,34 @@
             data: getDataForChart(chartId),
             options: getOptionsForChart(chartId, newType)
         });
+    }
+
+    // Dynamic Chart Size Toggle (Expand / Collapse)
+    function toggleCardExpand(colId, chartId) {
+        const colElement = document.getElementById(colId);
+        if (!colElement) return;
+
+        const cardBody = colElement.querySelector('.card-body');
+        const icon = colElement.querySelector('.btn-expand-card i');
+        const isExpanded = colElement.classList.contains('col-lg-12');
+
+        if (isExpanded) {
+            colElement.classList.remove('col-lg-12');
+            colElement.classList.add('col-lg-6');
+            if (cardBody) cardBody.style.height = '400px';
+            if (icon) icon.className = 'bi bi-arrows-angle-expand';
+        } else {
+            colElement.classList.remove('col-lg-6');
+            colElement.classList.add('col-lg-12');
+            if (cardBody) cardBody.style.height = '550px';
+            if (icon) icon.className = 'bi bi-arrows-angle-contract';
+        }
+
+        const chart = charts[chartId];
+        if (chart) {
+            chart.resize();
+            chart.update();
+        }
     }
 
     // Run on Load
