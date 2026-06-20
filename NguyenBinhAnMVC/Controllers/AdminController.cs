@@ -180,8 +180,15 @@ namespace NguyenBinhAnMVC.Controllers
             var authResult = RequireAdminRole();
             if (authResult != null) return authResult;
 
-            await _systemAccountService.DeleteAccountAsync(id);
-            TempData["SuccessMessage"] = "Account deleted successfully.";
+            try
+            {
+                await _systemAccountService.DeleteAccountAsync(id);
+                TempData["SuccessMessage"] = "Account deleted successfully.";
+            }
+            catch (Exception)
+            {
+                TempData["ErrorMessage"] = "Cannot delete this account because it is associated with news articles or other data.";
+            }
             return RedirectToAction(nameof(Accounts));
         }
 
@@ -268,7 +275,7 @@ namespace NguyenBinhAnMVC.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> ExportNewsReportCsv(DateTime startDate, DateTime endDate)
+        public async Task<IActionResult> ExportNewsReportExcel(DateTime startDate, DateTime endDate)
         {
             var authResult = RequireAdminRole();
             if (authResult != null) return authResult;
@@ -287,39 +294,61 @@ namespace NguyenBinhAnMVC.Controllers
             var accountsDict = accounts.ToDictionary(a => a.AccountID, a => a.AccountName ?? "Unknown");
             var categoriesDict = categories.ToDictionary(c => c.CategoryID, c => c.CategoryName);
 
-            var builder = new System.Text.StringBuilder();
-            builder.AppendLine("ArticleID,Title,Headline,CreatedDate,Source,Category,Status,Author,ModifiedDate");
-
-            foreach (var news in newsArticles.OrderByDescending(n => n.CreatedDate))
+            OfficeOpenXml.ExcelPackage.License.SetNonCommercialPersonal("TomOutfit");
+            using (var package = new OfficeOpenXml.ExcelPackage())
             {
-                var authorName = news.CreatedByID.HasValue && accountsDict.TryGetValue(news.CreatedByID.Value, out var accName) ? accName : "Unknown";
-                var catName = news.CategoryID.HasValue && categoriesDict.TryGetValue(news.CategoryID.Value, out var cName) ? cName : "N/A";
+                var worksheet = package.Workbook.Worksheets.Add("News Report");
 
-                string EscapeCsv(string? value)
+                // Headers
+                worksheet.Cells[1, 1].Value = "Article ID";
+                worksheet.Cells[1, 2].Value = "Title";
+                worksheet.Cells[1, 3].Value = "Headline";
+                worksheet.Cells[1, 4].Value = "Created Date";
+                worksheet.Cells[1, 5].Value = "Source";
+                worksheet.Cells[1, 6].Value = "Category";
+                worksheet.Cells[1, 7].Value = "Status";
+                worksheet.Cells[1, 8].Value = "Author";
+                worksheet.Cells[1, 9].Value = "Modified Date";
+
+                // Styling headers
+                using (var range = worksheet.Cells[1, 1, 1, 9])
                 {
-                    if (string.IsNullOrEmpty(value)) return "";
-                    value = value.Replace("\"", "\"\"");
-                    if (value.Contains(",") || value.Contains("\"") || value.Contains("\r") || value.Contains("\n"))
-                    {
-                        return $"\"{value}\"";
-                    }
-                    return value;
+                    range.Style.Font.Bold = true;
+                    range.Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
+                    range.Style.Fill.BackgroundColor.SetColor(System.Drawing.Color.FromArgb(16, 185, 129)); // Excel-like green (#10b981)
+                    range.Style.Font.Color.SetColor(System.Drawing.Color.White);
+                    range.Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Center;
                 }
 
-                builder.AppendLine($"{EscapeCsv(news.NewsArticleID)}," +
-                                   $"{EscapeCsv(news.NewsTitle)}," +
-                                   $"{EscapeCsv(news.Headline)}," +
-                                   $"{EscapeCsv(news.CreatedDate?.ToString("yyyy-MM-dd HH:mm:ss"))}," +
-                                   $"{EscapeCsv(news.NewsSource)}," +
-                                   $"{EscapeCsv(catName)}," +
-                                   $"{(news.NewsStatus == true ? "Active" : "Inactive")}," +
-                                   $"{EscapeCsv(authorName)}," +
-                                   $"{EscapeCsv(news.ModifiedDate?.ToString("yyyy-MM-dd HH:mm:ss"))}");
-            }
+                int row = 2;
+                foreach (var news in newsArticles.OrderByDescending(n => n.CreatedDate))
+                {
+                    var authorName = news.CreatedByID.HasValue && accountsDict.TryGetValue(news.CreatedByID.Value, out var accName) ? accName : "Unknown";
+                    var catName = news.CategoryID.HasValue && categoriesDict.TryGetValue(news.CategoryID.Value, out var cName) ? cName : "N/A";
 
-            var fileName = $"NewsReport_{startDate:yyyyMMdd}_to_{endDate:yyyyMMdd}.csv";
-            var bytes = System.Text.Encoding.UTF8.GetPreamble().Concat(System.Text.Encoding.UTF8.GetBytes(builder.ToString())).ToArray();
-            return File(bytes, "text/csv", fileName);
+                    worksheet.Cells[row, 1].Value = news.NewsArticleID;
+                    worksheet.Cells[row, 2].Value = news.NewsTitle;
+                    worksheet.Cells[row, 3].Value = news.Headline;
+                    worksheet.Cells[row, 4].Value = news.CreatedDate?.ToString("yyyy-MM-dd HH:mm:ss");
+                    worksheet.Cells[row, 5].Value = news.NewsSource;
+                    worksheet.Cells[row, 6].Value = catName;
+                    worksheet.Cells[row, 7].Value = news.NewsStatus == true ? "Active" : "Inactive";
+                    worksheet.Cells[row, 8].Value = authorName;
+                    worksheet.Cells[row, 9].Value = news.ModifiedDate?.ToString("yyyy-MM-dd HH:mm:ss");
+
+                    row++;
+                }
+
+                // Auto-fit columns
+                worksheet.Cells[worksheet.Dimension.Address].AutoFitColumns();
+
+                var stream = new System.IO.MemoryStream();
+                await package.SaveAsAsync(stream);
+                stream.Position = 0;
+
+                var fileName = $"NewsReport_{startDate:yyyyMMdd}_to_{endDate:yyyyMMdd}.xlsx";
+                return File(stream.ToArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
+            }
         }
     }
 }

@@ -1,10 +1,56 @@
 @model IEnumerable<NguyenBinhAn_A01_Data.Models.NewsArticle>
+@using System.Text.Json
 @{
     ViewData["Title"] = "News Statistics Report";
     var accountsDict = ViewBag.AccountsDict as Dictionary<short, string> ?? new Dictionary<short, string>();
     var categoriesDict = ViewBag.CategoriesDict as Dictionary<short, string> ?? new Dictionary<short, string>();
     DateTime startDate = ViewBag.StartDate is DateTime sd ? sd : DateTime.MinValue;
     DateTime endDate = ViewBag.EndDate is DateTime ed ? ed : DateTime.MinValue;
+
+    // 1. Articles by Category
+    var categoryDataPoints = Model
+        .GroupBy(n => n.CategoryID)
+        .Select(g => new {
+            CategoryId = g.Key,
+            CategoryName = g.Key.HasValue && categoriesDict.ContainsKey(g.Key.Value) ? categoriesDict[g.Key.Value] : "N/A",
+            Count = g.Count()
+        })
+        .OrderByDescending(x => x.Count)
+        .ToList();
+
+    // 2. Status Data
+    var statusDataPoints = new[] {
+        new { Name = "Active", Count = Model.Count(n => n.NewsStatus == true) },
+        new { Name = "Inactive", Count = Model.Count(n => n.NewsStatus != true) }
+    };
+
+    // 3. Articles by Author
+    var authorDataPoints = Model
+        .GroupBy(n => n.CreatedByID)
+        .Select(g => new {
+            AuthorId = g.Key,
+            AuthorName = g.Key.HasValue && accountsDict.ContainsKey(g.Key.Value) ? accountsDict[g.Key.Value] : "Unknown",
+            Count = g.Count()
+        })
+        .OrderByDescending(x => x.Count)
+        .ToList();
+
+    // 4. Articles Trend Over Time
+    var timeDataPoints = Model
+        .Where(n => n.CreatedDate.HasValue)
+        .GroupBy(n => n.CreatedDate.Value.Date)
+        .Select(g => new {
+            Date = g.Key.ToString("yyyy-MM-dd"),
+            Count = g.Count()
+        })
+        .OrderBy(x => x.Date)
+        .ToList();
+
+    var jsonSerializerOptions = new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase };
+    var categoryDataJson = JsonSerializer.Serialize(categoryDataPoints, jsonSerializerOptions);
+    var statusDataJson = JsonSerializer.Serialize(statusDataPoints, jsonSerializerOptions);
+    var authorDataJson = JsonSerializer.Serialize(authorDataPoints, jsonSerializerOptions);
+    var timeDataJson = JsonSerializer.Serialize(timeDataPoints, jsonSerializerOptions);
 }
 
 <style>
@@ -112,8 +158,8 @@
                 <a asp-action="ExportNewsReportJson" asp-route-startDate="@startDate.ToString("yyyy-MM-dd")" asp-route-endDate="@endDate.ToString("yyyy-MM-dd")" class="btn-admin-primary" style="background: linear-gradient(135deg, #fbbf24 0%, #d97706 100%); border: none; box-shadow: 0 4px 14px rgba(217, 119, 6, 0.4);">
                     <i class="bi bi-filetype-json"></i>Export JSON
                 </a>
-                <a asp-action="ExportNewsReportCsv" asp-route-startDate="@startDate.ToString("yyyy-MM-dd")" asp-route-endDate="@endDate.ToString("yyyy-MM-dd")" class="btn-admin-primary" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); border: none; box-shadow: 0 4px 14px rgba(16, 185, 129, 0.4);">
-                    <i class="bi bi-filetype-csv"></i>Export CSV
+                <a asp-action="ExportNewsReportExcel" asp-route-startDate="@startDate.ToString("yyyy-MM-dd")" asp-route-endDate="@endDate.ToString("yyyy-MM-dd")" class="btn-admin-primary" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); border: none; box-shadow: 0 4px 14px rgba(16, 185, 129, 0.4);">
+                    <i class="bi bi-file-earmark-excel"></i>Export Excel
                 </a>
                 <button type="button" id="btn-export-pdf" class="btn-admin-primary" style="background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%); border: none; box-shadow: 0 4px 14px rgba(29, 78, 216, 0.4);">
                     <i class="bi bi-filetype-pdf"></i>Export PDF
@@ -174,6 +220,72 @@
                             <div class="col-6 col-md-3">
                                 <div class="metric-number" style="color: #6366f1;">@Model.Select(n => n.CategoryID).Distinct().Count()</div>
                                 <div class="metric-label">Categories</div>
+                            </div>
+                        </div>
+                </div>
+
+                <!-- Charts Dashboard Section -->
+                <div class="row mb-4">
+                    <!-- Chart 1: Category Distribution -->
+                    <div class="col-md-6 mb-4">
+                        <div class="card-modern h-100 shadow-sm border-0">
+                            <div class="card-header-modern bg-white border-0 pt-4 px-4 d-flex justify-content-between align-items-center">
+                                <h5 class="card-title mb-0" style="font-weight: 700; color: #1e293b;"><i class="bi bi-tag-fill me-2 text-danger"></i>Articles by Category</h5>
+                                <div class="btn-group btn-group-sm" role="group">
+                                    <button type="button" class="btn btn-outline-danger btn-sm active" onclick="changeChartType('categoryChart', 'bar')">Bar</button>
+                                    <button type="button" class="btn btn-outline-danger btn-sm" onclick="changeChartType('categoryChart', 'pie')">Pie</button>
+                                </div>
+                            </div>
+                            <div class="card-body p-4" style="min-height: 320px; position: relative;">
+                                <canvas id="categoryChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Chart 2: Active vs Inactive -->
+                    <div class="col-md-6 mb-4">
+                        <div class="card-modern h-100 shadow-sm border-0">
+                            <div class="card-header-modern bg-white border-0 pt-4 px-4 d-flex justify-content-between align-items-center">
+                                <h5 class="card-title mb-0" style="font-weight: 700; color: #1e293b;"><i class="bi bi-toggle2-on me-2 text-danger"></i>Status Distribution</h5>
+                                <div class="btn-group btn-group-sm" role="group">
+                                    <button type="button" class="btn btn-outline-danger btn-sm active" onclick="changeChartType('statusChart', 'doughnut')">Doughnut</button>
+                                    <button type="button" class="btn btn-outline-danger btn-sm" onclick="changeChartType('statusChart', 'pie')">Pie</button>
+                                </div>
+                            </div>
+                            <div class="card-body p-4" style="min-height: 320px; position: relative;">
+                                <canvas id="statusChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Chart 3: Trend Over Time -->
+                    <div class="col-md-6 mb-4">
+                        <div class="card-modern h-100 shadow-sm border-0">
+                            <div class="card-header-modern bg-white border-0 pt-4 px-4 d-flex justify-content-between align-items-center">
+                                <h5 class="card-title mb-0" style="font-weight: 700; color: #1e293b;"><i class="bi bi-graph-up me-2 text-danger"></i>Articles Creation Trend</h5>
+                                <div class="btn-group btn-group-sm" role="group">
+                                    <button type="button" class="btn btn-outline-danger btn-sm active" onclick="changeChartType('trendChart', 'line')">Line</button>
+                                    <button type="button" class="btn btn-outline-danger btn-sm" onclick="changeChartType('trendChart', 'bar')">Bar</button>
+                                </div>
+                            </div>
+                            <div class="card-body p-4" style="min-height: 320px; position: relative;">
+                                <canvas id="trendChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Chart 4: Author Distribution -->
+                    <div class="col-md-6 mb-4">
+                        <div class="card-modern h-100 shadow-sm border-0">
+                            <div class="card-header-modern bg-white border-0 pt-4 px-4 d-flex justify-content-between align-items-center">
+                                <h5 class="card-title mb-0" style="font-weight: 700; color: #1e293b;"><i class="bi bi-people-fill me-2 text-danger"></i>Articles by Author</h5>
+                                <div class="btn-group btn-group-sm" role="group">
+                                    <button type="button" class="btn btn-outline-danger btn-sm active" onclick="changeChartType('authorChart', 'bar')">Bar</button>
+                                    <button type="button" class="btn btn-outline-danger btn-sm" onclick="changeChartType('authorChart', 'polarArea')">Polar</button>
+                                </div>
+                            </div>
+                            <div class="card-body p-4" style="min-height: 320px; position: relative;">
+                                <canvas id="authorChart"></canvas>
                             </div>
                         </div>
                     </div>
@@ -245,6 +357,7 @@
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
     document.getElementById('btn-export-pdf').addEventListener('click', function () {
         const element = document.getElementById('report-export-container');
@@ -269,4 +382,219 @@
             pdfHeader.classList.add('d-none');
         });
     });
+
+    // Parsed Data from C#
+    const categoriesData = @Html.Raw(categoryDataJson);
+    const statusData = @Html.Raw(statusDataJson);
+    const trendData = @Html.Raw(timeDataJson);
+    const authorsData = @Html.Raw(authorDataJson);
+
+    // Chart instances dictionary
+    const charts = {};
+
+    // Common styling configs
+    const colorPalette = [
+        '#dc2626', // Red
+        '#2563eb', // Blue
+        '#10b981', // Emerald
+        '#f59e0b', // Amber
+        '#8b5cf6', // Purple
+        '#06b6d4', // Cyan
+        '#ec4899', // Pink
+        '#14b8a6', // Teal
+        '#f97316'  // Orange
+    ];
+
+    // Helper to generate chart options
+    function getCommonOptions(title) {
+        return {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    display: true,
+                    position: 'bottom',
+                    labels: {
+                        boxWidth: 12,
+                        padding: 15,
+                        font: {
+                            family: 'system-ui, -apple-system, sans-serif',
+                            weight: '600',
+                            size: 11
+                        }
+                    }
+                },
+                tooltip: {
+                    padding: 10,
+                    backgroundColor: 'rgba(15, 23, 42, 0.9)',
+                    titleFont: {
+                        family: 'system-ui, -apple-system, sans-serif',
+                        weight: '700',
+                        size: 13
+                    },
+                    bodyFont: {
+                        family: 'system-ui, -apple-system, sans-serif',
+                        size: 12
+                    },
+                    cornerRadius: 8
+                }
+            }
+        };
+    }
+
+    // Helper to generate fresh options for charts
+    function getOptionsForChart(chartId, chartType) {
+        let title = '';
+        if (chartId === 'categoryChart') title = 'Articles by Category';
+        else if (chartId === 'statusChart') title = 'Status Distribution';
+        else if (chartId === 'trendChart') title = 'Articles Trend';
+        else if (chartId === 'authorChart') title = 'Articles by Author';
+
+        const baseOptions = getCommonOptions(title);
+
+        if (chartType === 'pie' || chartType === 'doughnut' || chartType === 'polarArea') {
+            if (chartId === 'statusChart' && chartType === 'doughnut') {
+                baseOptions.cutout = '60%';
+            }
+            return baseOptions;
+        } else {
+            return {
+                ...baseOptions,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: { stepSize: 1 }
+                    }
+                }
+            };
+        }
+    }
+
+    // Helper to generate fresh data for charts
+    function getDataForChart(chartId) {
+        if (chartId === 'categoryChart') {
+            const labels = categoriesData.map(x => x.categoryName);
+            const counts = categoriesData.map(x => x.count);
+            return {
+                labels: labels,
+                datasets: [{
+                    label: 'Number of Articles',
+                    data: counts,
+                    backgroundColor: colorPalette.slice(0, labels.length),
+                    borderRadius: 6,
+                    borderWidth: 0
+                }]
+            };
+        } else if (chartId === 'statusChart') {
+            const labels = statusData.map(x => x.name);
+            const counts = statusData.map(x => x.count);
+            return {
+                labels: labels,
+                datasets: [{
+                    data: counts,
+                    backgroundColor: ['#10b981', '#64748b'],
+                    borderWidth: 2,
+                    borderColor: '#ffffff'
+                }]
+            };
+        } else if (chartId === 'trendChart') {
+            const labels = trendData.map(x => x.date);
+            const counts = trendData.map(x => x.count);
+            return {
+                labels: labels,
+                datasets: [{
+                    label: 'Articles Created',
+                    data: counts,
+                    borderColor: '#dc2626',
+                    backgroundColor: 'rgba(220, 38, 38, 0.1)',
+                    fill: true,
+                    tension: 0.3,
+                    borderWidth: 3,
+                    pointBackgroundColor: '#dc2626',
+                    pointBorderColor: '#ffffff',
+                    pointHoverRadius: 6
+                }]
+            };
+        } else if (chartId === 'authorChart') {
+            const labels = authorsData.map(x => x.authorName);
+            const counts = authorsData.map(x => x.count);
+            return {
+                labels: labels,
+                datasets: [{
+                    label: 'Articles Created',
+                    data: counts,
+                    backgroundColor: colorPalette.slice(0, labels.length).reverse(),
+                    borderRadius: 6,
+                    borderWidth: 0
+                }]
+            };
+        }
+        return null;
+    }
+
+    // Initialize Charts
+    function initCharts() {
+        const catCanvas = document.getElementById('categoryChart');
+        if (catCanvas) {
+            charts['categoryChart'] = new Chart(catCanvas, {
+                type: 'bar',
+                data: getDataForChart('categoryChart'),
+                options: getOptionsForChart('categoryChart', 'bar')
+            });
+        }
+
+        const statusCanvas = document.getElementById('statusChart');
+        if (statusCanvas) {
+            charts['statusChart'] = new Chart(statusCanvas, {
+                type: 'doughnut',
+                data: getDataForChart('statusChart'),
+                options: getOptionsForChart('statusChart', 'doughnut')
+            });
+        }
+
+        const trendCanvas = document.getElementById('trendChart');
+        if (trendCanvas) {
+            charts['trendChart'] = new Chart(trendCanvas, {
+                type: 'line',
+                data: getDataForChart('trendChart'),
+                options: getOptionsForChart('trendChart', 'line')
+            });
+        }
+
+        const authorCanvas = document.getElementById('authorChart');
+        if (authorCanvas) {
+            charts['authorChart'] = new Chart(authorCanvas, {
+                type: 'bar',
+                data: getDataForChart('authorChart'),
+                options: getOptionsForChart('authorChart', 'bar')
+            });
+        }
+    }
+
+    // Dynamic Chart Type Switcher
+    function changeChartType(chartId, newType) {
+        const chart = charts[chartId];
+        if (!chart) return;
+
+        // Toggle Active Button class in UI
+        const btnGroup = document.querySelector(`[onclick="changeChartType('${chartId}', '${newType}')"]`).parentElement;
+        btnGroup.querySelectorAll('button').forEach(btn => btn.classList.remove('active'));
+        const activeBtn = Array.from(btnGroup.querySelectorAll('button')).find(btn => btn.getAttribute('onclick').includes(newType));
+        if (activeBtn) activeBtn.classList.add('active');
+
+        // Destroy previous instance
+        chart.destroy();
+
+        // Recreate chart with new type and fresh configurations
+        const canvas = document.getElementById(chartId);
+        
+        charts[chartId] = new Chart(canvas, {
+            type: newType,
+            data: getDataForChart(chartId),
+            options: getOptionsForChart(chartId, newType)
+        });
+    }
+
+    // Run on Load
+    document.addEventListener('DOMContentLoaded', initCharts);
 </script>

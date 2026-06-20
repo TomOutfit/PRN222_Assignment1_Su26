@@ -192,8 +192,15 @@ namespace NguyenBinhAnMVC.Controllers
             var authResult = RequireStaffRole();
             if (authResult != null) return authResult;
 
-            await _categoryService.DeleteCategoryAsync(id);
-            TempData["SuccessMessage"] = "Category deleted successfully.";
+            try
+            {
+                await _categoryService.DeleteCategoryAsync(id);
+                TempData["SuccessMessage"] = "Category deleted successfully.";
+            }
+            catch (InvalidOperationException ex)
+            {
+                TempData["ErrorMessage"] = ex.Message;
+            }
             return RedirectToAction(nameof(Categories));
         }
 
