@@ -136,8 +136,8 @@ Use these seeded credentials to test respective roles:
 | Role | Email | Password | Role Value |
 | :--- | :--- | :--- | :--- |
 | **Admin** | `admin@FUNewsManagementSystem.org` | `@@abc123@@` | `0` |
-| **Staff** | *(Check seed data in SQL script)* | *(Check seed data)* | `1` |
-| **Lecturer**| *(Check seed data)* | *(Check seed data)* | `2` |
+| **Staff** | `IsabellaDavid@FUNewsManagement.org` | `@1` | `1` |
+| **Lecturer**| `EmmaWilliam@FUNewsManagement.org` | `@1` | `2` |
 
 ---
 
